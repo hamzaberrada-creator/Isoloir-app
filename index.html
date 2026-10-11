@@ -1,0 +1,1357 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
+<title>Isoloir 2027</title>
+<meta name="description" content="Réponds à des questions précises et découvre de quels candidats à la présidentielle 2027 tu es le plus proche.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Funnel+Display:wght@400..700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Funnel+Sans:wght@400..700&display=swap">
+<style>
+/* Layout : une colonne mobile (560 px max) pour le test, une colonne large (1040 px) pour les programmes ; barre d'action collée en bas. */
+:root {
+  --bg: #F2F3EF; --surface: #FFFFFF; --surface-2: #E6E9E2; --ink: #14181E; --ink-2: #2A3038;
+  --muted: #59606A; --faint: #8A919A; --rule: #D8DCD3;
+  --accent: #0B6B70; --accent-strong: #084F53; --on-accent: #FFFFFF; --accent-soft: #DCEBE9;
+  --warn: #8A4B14; --warn-soft: #F5E6D4;
+  --night: #14181E; --night-2: #262D36; --on-night: #F2F3EF; --on-night-muted: #A9B1BA; --night-accent: #7CC5BF;
+  --font-d: "Funnel Display", "Helvetica Neue", Arial, system-ui, sans-serif;
+  --font-b: "Funnel Sans", "Helvetica Neue", Arial, system-ui, sans-serif;
+  --r-s: 12px; --r: 16px; --r-l: 24px;
+  --shadow: 0 1px 2px rgb(20 24 30 / .05), 0 10px 28px -16px rgb(20 24 30 / .25);
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #0E1115; --surface: #171B21; --surface-2: #232830; --ink: #ECEEE9; --ink-2: #D2D6D0;
+  --muted: #A1A8B1; --faint: #78808A; --rule: #2B3139;
+  --accent: #5DB7B0; --accent-strong: #80CBC5; --on-accent: #071214; --accent-soft: #163330;
+  --warn: #E2A86C; --warn-soft: #352617;
+  --night: #E9ECE6; --night-2: #D3D8D0; --on-night: #14181E; --on-night-muted: #4D5560; --night-accent: #0B6B70;
+  --shadow: 0 1px 2px rgb(0 0 0 / .3), 0 10px 28px -16px rgb(0 0 0 / .6);
+  color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --bg: #0E1115; --surface: #171B21; --surface-2: #232830; --ink: #ECEEE9; --ink-2: #D2D6D0;
+  --muted: #A1A8B1; --faint: #78808A; --rule: #2B3139;
+  --accent: #5DB7B0; --accent-strong: #80CBC5; --on-accent: #071214; --accent-soft: #163330;
+  --warn: #E2A86C; --warn-soft: #352617;
+  --night: #E9ECE6; --night-2: #D3D8D0; --on-night: #14181E; --on-night-muted: #4D5560; --night-accent: #0B6B70;
+  --shadow: 0 1px 2px rgb(0 0 0 / .3), 0 10px 28px -16px rgb(0 0 0 / .6);
+  color-scheme: dark; }
+
+html, body { height: 100%; }
+body { background: var(--bg); color: var(--ink); font-family: var(--font-b); font-size: 16px; line-height: 1.5; -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+#app { min-height: 100%; display: flex; flex-direction: column; }
+button, select, input, textarea { font: inherit; color: inherit; }
+button { -webkit-tap-highlight-color: transparent; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.num { font-variant-numeric: tabular-nums; }
+.muted { color: var(--muted); }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+h1:focus, h2:focus { outline: none; }
+
+/* Écran */
+.screen { flex: 1; display: flex; flex-direction: column; width: 100%; max-width: 560px; margin: 0 auto; padding-inline: 20px; box-sizing: border-box; }
+.screen.wide { max-width: 1040px; }
+.screen.enter > *:not(.footer-bar) { animation: rise .32s cubic-bezier(.2,.7,.2,1) both; }
+@keyframes rise { from { opacity: .35; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+
+.topbar { display: flex; align-items: center; justify-content: space-between; height: 60px; margin-inline: -10px; flex: none; }
+.topright { min-width: 44px; display: flex; justify-content: flex-end; align-items: center; padding-right: 6px; }
+.iconspace { width: 44px; }
+.iconbtn { width: 44px; height: 44px; border-radius: 999px; border: 0; background: transparent; color: var(--ink); display: grid; place-items: center; cursor: pointer; padding: 0; }
+.iconbtn:hover { background: var(--surface-2); }
+.wordmark { display: inline-flex; align-items: center; gap: 7px; height: 44px; padding: 0 8px; border: 0; background: none; cursor: pointer; font-family: var(--font-d); font-weight: 700; font-size: 19px; letter-spacing: -0.02em; color: var(--ink); border-radius: 12px; }
+.mark { width: 14px; height: 18px; box-sizing: border-box; border: 1.5px solid currentColor; border-top-width: 4px; border-radius: 4px; }
+.count { font-size: 13.5px; font-weight: 600; color: var(--muted); }
+
+.eyebrow { margin: 0; font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); }
+.eyebrow.center { text-align: center; }
+.title { font-family: var(--font-d); font-weight: 600; font-size: clamp(28px, 7vw, 38px); line-height: 1.08; letter-spacing: -0.025em; margin: 8px 0 0; text-wrap: balance; }
+.lead { color: var(--muted); font-size: 16px; margin: 12px 0 0; max-width: 60ch; }
+.h2 { font-family: var(--font-d); font-weight: 600; font-size: 22px; letter-spacing: -0.015em; margin: 0; text-wrap: balance; }
+.stack-l { display: flex; flex-direction: column; padding-top: 12px; }
+
+/* Boutons */
+.btn { height: 54px; border-radius: var(--r); border: 0; font-weight: 600; font-size: 16px; padding: 0 20px; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 10px; text-decoration: none; transition: background-color .15s, transform .1s, box-shadow .15s; }
+.btn:active:not(:disabled) { transform: scale(.985); }
+.btn.primary { background: var(--accent); color: var(--on-accent); }
+.btn.primary:hover:not(:disabled) { background: var(--accent-strong); }
+.btn.primary:disabled { background: var(--surface-2); color: var(--faint); cursor: not-allowed; }
+.btn.ghost { background: transparent; color: var(--ink); box-shadow: inset 0 0 0 1.5px var(--ink); }
+.btn.ghost:hover { background: var(--surface-2); }
+.btn.link { background: transparent; color: var(--muted); text-decoration: underline; text-underline-offset: 4px; padding: 0 12px; }
+.btn.link:hover { color: var(--ink); }
+.btn.small { height: 40px; font-size: 14px; padding: 0 14px; border-radius: 12px; }
+.btn.block { width: 100%; }
+.btn.grow { flex: 1; }
+.inline-link { border: 0; background: none; padding: 0; color: inherit; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+.footer-bar { position: sticky; bottom: 0; margin-top: auto; padding-top: 14px; padding-bottom: calc(18px + env(safe-area-inset-bottom, 0px)); background: var(--bg); display: flex; gap: 8px; align-items: center; z-index: 5; }
+
+/* Accueil */
+.home { justify-content: center; }
+.hero { display: flex; flex-direction: column; align-items: center; text-align: center; padding-block: 20px 4px; }
+.booth { position: relative; width: 150px; height: 176px; margin-bottom: 18px; }
+.booth .rod { position: absolute; left: -12px; right: -12px; top: 0; height: 6px; border-radius: 3px; background: var(--ink); }
+.cabin { position: absolute; left: 0; right: 0; top: 6px; bottom: 10px; overflow: hidden; border-radius: 0 0 10px 10px; background: var(--surface-2); }
+.floor { position: absolute; left: -20px; right: -20px; bottom: 0; height: 2px; border-radius: 1px; background: var(--rule); }
+.ballot { position: absolute; left: 50%; top: 50%; width: 82px; height: 106px; transform: translate(-50%, -46%) rotate(-4deg); background: var(--surface); border-radius: 8px; box-shadow: var(--shadow); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; }
+.ballot-k { font-size: 8.5px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+.ballot-y { font-family: var(--font-d); font-weight: 700; font-size: 26px; letter-spacing: -0.03em; color: var(--ink); }
+.ballot-l { width: 48px; height: 3px; border-radius: 2px; background: var(--rule); }
+.ballot-l.s { width: 32px; }
+.curtain { position: absolute; top: 0; bottom: 0; width: 50.5%; background: repeating-linear-gradient(90deg, var(--night) 0 8px, var(--night-2) 8px 16px); }
+.curtain.l { left: 0; transform-origin: left center; animation: openL 1.5s cubic-bezier(.65,0,.25,1) .35s both; }
+.curtain.r { right: 0; transform-origin: right center; animation: openR 1.5s cubic-bezier(.65,0,.25,1) .35s both; }
+@keyframes openL { from { transform: none; } to { transform: scaleX(.22); } }
+@keyframes openR { from { transform: none; } to { transform: scaleX(.22); } }
+.brand { font-family: var(--font-d); font-weight: 700; font-size: clamp(56px, 16vw, 76px); letter-spacing: -0.045em; line-height: .9; margin: 10px 0 0; }
+.tagline { margin: 16px 0 0; max-width: 34ch; font-size: 17px; line-height: 1.45; color: var(--muted); text-wrap: balance; }
+.facts { list-style: none; padding: 0; margin: 18px 0 0; display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; }
+.facts li { font-size: 13.5px; background: var(--surface); border-radius: 999px; padding: 6px 12px; color: var(--muted); }
+.facts b { color: var(--ink); font-weight: 600; }
+.ctas { display: flex; flex-direction: column; align-items: center; gap: 10px; margin-top: 28px; }
+.home-foot { text-align: center; font-size: 13px; color: var(--muted); margin: 18px 0 calc(20px + env(safe-area-inset-bottom, 0px)); }
+
+/* Pacte */
+.pact { list-style: none; padding: 0; margin: 24px 0 0; display: flex; flex-direction: column; gap: 12px; }
+.pact li { display: grid; grid-template-columns: 48px minmax(0, 1fr); gap: 14px; align-items: start; background: var(--surface); border-radius: var(--r-l); padding: 18px; }
+.pact-ic { width: 48px; height: 48px; border-radius: 14px; background: var(--accent-soft); color: var(--accent); display: grid; place-items: center; }
+.pact h2 { font-family: var(--font-d); font-size: 19px; font-weight: 600; letter-spacing: -0.01em; margin: 2px 0 4px; }
+.pact p { margin: 0; color: var(--muted); font-size: 15px; }
+
+/* Choix du parcours */
+.choices { display: flex; flex-direction: column; gap: 10px; margin-top: 24px; padding-bottom: 28px; }
+.choice { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; text-align: left; padding: 18px 20px; border-radius: var(--r-l); background: var(--surface); border: 1.5px solid transparent; cursor: pointer; transition: border-color .15s, transform .1s; }
+.choice:hover { border-color: var(--ink); }
+.choice:active { transform: scale(.99); }
+.choice.rec { border-color: var(--accent); }
+.choice-top { display: flex; align-items: center; gap: 10px; width: 100%; justify-content: space-between; }
+.choice-h { font-family: var(--font-d); font-size: 24px; font-weight: 600; letter-spacing: -0.02em; }
+.choice-m { font-size: 14px; font-weight: 600; color: var(--accent); }
+.choice-d { font-size: 15px; color: var(--muted); }
+.pill-rec, .pill-prio { font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--accent); background: var(--accent-soft); border-radius: 999px; padding: 4px 10px; }
+
+/* Puces */
+.chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 22px; }
+.chips.scroll { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; margin-inline: -20px; padding-inline: 20px; padding-bottom: 4px; }
+.chips.scroll::-webkit-scrollbar { display: none; }
+.chip { flex: none; min-height: 44px; padding: 0 16px; border-radius: 999px; border: 1.5px solid var(--rule); background: var(--surface); font-weight: 600; font-size: 14.5px; color: var(--ink); cursor: pointer; display: inline-flex; align-items: center; gap: 8px; transition: background-color .15s, border-color .15s; }
+.chip:hover:not(:disabled) { border-color: var(--ink); }
+.chip[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.chip:disabled { opacity: .45; cursor: not-allowed; }
+.chip-n { font-size: 12px; opacity: .65; }
+.counter { margin: 14px 0 0; color: var(--muted); font-size: 14px; }
+
+/* Progression */
+.progress { display: flex; gap: 4px; flex: none; }
+.seg-p { flex: 1; height: 5px; border-radius: 999px; background: var(--surface-2); overflow: hidden; }
+.seg-p i { display: block; height: 100%; background: var(--ink); border-radius: 999px; transition: width .3s; }
+.seg-p.cur { background: color-mix(in srgb, var(--accent) 22%, var(--surface-2)); }
+.seg-p.cur i { background: var(--accent); }
+
+/* Chapitre */
+.chapter-body { margin-block: auto; padding-block: 40px; }
+.chapter-h { font-family: var(--font-d); font-weight: 700; font-size: clamp(46px, 13vw, 72px); letter-spacing: -0.04em; line-height: .95; margin: 12px 0 0; text-wrap: balance; }
+.chapter-meta { margin: 18px 0 0; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+
+/* Question */
+.q-meta { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-top: 12px; font-size: 13px; color: var(--muted); }
+.q-body { padding-top: 18px; }
+.q { font-family: var(--font-d); font-weight: 600; font-size: clamp(26px, 6.6vw, 33px); line-height: 1.12; letter-spacing: -0.02em; margin: 0; text-wrap: balance; }
+.stmt { background: var(--surface); border-radius: var(--r-l); padding: 20px 20px 22px; box-shadow: var(--shadow); }
+.stmt-k { margin: 0 0 8px; font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+.fmt-n .q { font-size: clamp(23px, 5.8vw, 29px); line-height: 1.18; }
+.now { display: flex; gap: 10px; align-items: flex-start; font-size: 14px; line-height: 1.45; color: var(--muted); margin: 14px 0 0; }
+.pill { flex: none; font-size: 10.5px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--ink); background: var(--surface-2); border-radius: 999px; padding: 3px 9px; margin-top: 1px; }
+.now-src { color: var(--muted); font-size: 12.5px; text-underline-offset: 3px; }
+.answer { margin-top: 22px; }
+
+.scale-cap { margin: 0 0 8px; font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+.paliers { position: relative; display: flex; flex-direction: column; gap: 6px; }
+.rail { position: absolute; left: 27px; top: 24px; bottom: 24px; width: 2px; border-radius: 2px; background: var(--rule); }
+.opt { position: relative; display: flex; align-items: center; gap: 14px; width: 100%; min-height: 52px; padding: 10px 14px 10px 17px; border: 1px solid var(--rule); border-radius: 14px; background: var(--surface); font-weight: 500; font-size: 16.5px; line-height: 1.3; text-align: left; cursor: pointer; transition: background-color .15s, border-color .15s, color .15s; }
+.opt:hover:not([aria-pressed="true"]) { border-color: var(--ink); }
+.opt .dot { flex: none; width: 20px; height: 20px; box-sizing: border-box; border-radius: 50%; border: 2px solid var(--faint); background: var(--surface); transition: background-color .15s; }
+.opt.cat .dot { border-radius: 6px; }
+.opt[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.opt[aria-pressed="true"] .dot { border-color: var(--bg); background: var(--accent); }
+.opt-l { flex: 1; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.opt-l small { font-size: 13.5px; opacity: .75; }
+.k { font-family: var(--font-b); font-size: 11px; color: var(--faint); border: 1px solid var(--rule); border-radius: 6px; padding: 1px 6px; display: none; }
+@media (hover: hover) and (pointer: fine) { .k { display: inline-block; } }
+.opt[aria-pressed="true"] .k { color: var(--bg); border-color: color-mix(in srgb, var(--bg) 40%, transparent); }
+.or { display: flex; align-items: center; gap: 10px; margin: 10px 0; font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+.or span { flex: 1; border-top: 1px dashed var(--rule); }
+
+.likert { position: relative; display: flex; justify-content: space-between; align-items: center; margin-top: 12px; }
+.likert-line { position: absolute; left: 26px; right: 26px; top: 50%; height: 2px; border-radius: 1px; background: var(--rule); }
+.lk { position: relative; width: 52px; height: 52px; border-radius: 50%; border: 0; background: transparent; display: grid; place-items: center; cursor: pointer; padding: 0; }
+.lk span { display: block; box-sizing: border-box; border-radius: 50%; border: 2px solid var(--faint); background: var(--bg); transition: transform .15s, background-color .15s, border-color .15s; }
+.lk:hover span { border-color: var(--ink); transform: scale(1.06); }
+.lk[aria-checked="true"] span { background: var(--ink); border-color: var(--ink); box-shadow: 0 0 0 5px color-mix(in srgb, var(--accent) 30%, transparent); }
+.likert-ends { display: flex; justify-content: space-between; gap: 16px; margin-top: 8px; font-size: 13px; font-weight: 600; color: var(--muted); }
+.likert-ends span:last-child { text-align: right; }
+.likert-choice { margin: 18px 0 0; text-align: center; font-family: var(--font-d); font-size: 22px; font-weight: 600; letter-spacing: -0.01em; min-height: 30px; }
+.likert-choice .muted { font-family: var(--font-b); font-size: 15px; font-weight: 500; }
+
+.duel { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); gap: 8px; align-items: stretch; margin-bottom: 14px; }
+.duel-card { background: var(--surface); border-radius: var(--r); padding: 14px; font-size: 15px; line-height: 1.35; font-weight: 500; border: 1.5px solid transparent; transition: border-color .15s, background-color .15s; }
+.duel-card.on { border-color: var(--ink); }
+.duel-k { display: block; font-family: var(--font-d); font-weight: 700; font-size: 13px; color: var(--accent); margin-bottom: 6px; }
+.duel-vs { align-self: center; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); }
+
+.gauge { display: flex; flex-direction: column; }
+.readout { display: flex; flex-direction: column; gap: 2px; min-height: 76px; }
+.readout-v { font-family: var(--font-d); font-weight: 600; font-size: clamp(38px, 11vw, 52px); letter-spacing: -0.035em; line-height: 1.05; }
+.readout-s { font-size: 15px; font-weight: 600; color: var(--muted); min-height: 22px; }
+.nuke { position: relative; padding-top: 22px; margin-top: 14px; }
+.nuke-today { position: absolute; top: 0; bottom: 0; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; z-index: 1; pointer-events: none; }
+.nuke-today em { font-style: normal; font-size: 10.5px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); height: 20px; white-space: nowrap; }
+.nuke-today::after { content: ""; flex: 1; border-left: 2px dashed var(--bg); }
+.nuke-bar { display: flex; height: 52px; border-radius: var(--r); overflow: hidden; background: var(--surface-2); }
+.nuke-bar i { display: flex; align-items: center; background: var(--ink); color: var(--bg); padding-left: 14px; box-sizing: border-box; overflow: hidden; white-space: nowrap; font-style: normal; transition: width .35s cubic-bezier(.2,.7,.2,1); }
+.nuke-bar b, .nuke-rest { font-size: 13px; font-weight: 600; }
+.nuke-rest { flex: 1; display: flex; align-items: center; justify-content: flex-end; padding-right: 14px; color: var(--muted); white-space: nowrap; overflow: hidden; }
+input.jauge { -webkit-appearance: none; appearance: none; width: 100%; height: 44px; margin: 14px 0 0; background: transparent; cursor: pointer; }
+input.jauge::-webkit-slider-runnable-track { height: 8px; border-radius: 999px; background: var(--surface-2); }
+input.jauge::-moz-range-track { height: 8px; border-radius: 999px; background: var(--surface-2); }
+input.jauge::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 30px; height: 30px; margin-top: -11px; border-radius: 50%; background: var(--surface); border: 2px solid var(--faint); box-shadow: var(--shadow); }
+input.jauge::-moz-range-thumb { width: 26px; height: 26px; border-radius: 50%; background: var(--surface); border: 2px solid var(--faint); }
+input.jauge.on::-webkit-slider-thumb { background: var(--ink); border: 4px solid var(--bg); box-shadow: 0 0 0 1.5px var(--ink); }
+input.jauge.on::-moz-range-thumb { background: var(--ink); border: 4px solid var(--bg); box-shadow: 0 0 0 1.5px var(--ink); }
+.crans { display: grid; gap: 4px; margin: 2px -4px 0; }
+.cran { min-height: 44px; border: 0; border-radius: 12px; background: transparent; color: var(--muted); font-size: 12.5px; font-weight: 600; line-height: 1.2; cursor: pointer; padding: 4px 2px; }
+.cran:hover { color: var(--ink); }
+.cran[aria-pressed="true"] { background: var(--surface-2); color: var(--ink); }
+.hint { margin: 10px 0 0; font-size: 13px; color: var(--muted); }
+
+.imp-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-top: 28px; }
+.imp-l { font-size: 14px; font-weight: 600; }
+.seg { display: flex; gap: 2px; padding: 3px; background: var(--surface-2); border-radius: 999px; }
+.seg button { min-height: 40px; padding: 0 14px; border: 0; border-radius: 999px; background: transparent; color: var(--ink); font-weight: 600; font-size: 13.5px; cursor: pointer; white-space: nowrap; }
+.seg button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
+.seg.wide { margin-top: 14px; }
+.seg.wide button, .seg.big button { flex: 1; }
+.seg.big { margin-top: 18px; }
+.seg.big button { min-height: 44px; font-size: 14.5px; }
+
+/* Résultats */
+.top-card { position: relative; background: var(--night); color: var(--on-night); border-radius: var(--r-l); overflow: hidden; margin-top: 4px; }
+.folds { height: 12px; background: repeating-linear-gradient(90deg, var(--night-2) 0 7px, var(--night) 7px 14px); }
+.top-in { padding: 20px 22px 22px; display: flex; flex-direction: column; }
+.top-k { margin: 0; font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--on-night-muted); }
+.top-name { font-family: var(--font-d); font-weight: 600; font-size: clamp(32px, 9vw, 44px); letter-spacing: -0.03em; line-height: 1.02; margin: 10px 0 0; text-wrap: balance; }
+.top-p { margin: 4px 0 0; font-size: 14.5px; color: var(--on-night-muted); }
+.top-score { display: flex; align-items: flex-end; gap: 14px; margin-top: 20px; }
+.big { font-family: var(--font-d); font-weight: 600; font-size: 80px; letter-spacing: -0.045em; line-height: .82; display: flex; align-items: flex-start; }
+.big em { font-style: normal; font-size: 30px; color: var(--night-accent); margin: 4px 0 0 3px; letter-spacing: 0; }
+.top-d { font-size: 14px; line-height: 1.4; color: var(--on-night-muted); padding-bottom: 4px; }
+.top-d b { color: var(--on-night); }
+.top-foot { margin-top: 18px; padding-top: 14px; border-top: 1px solid color-mix(in srgb, var(--on-night) 14%, transparent); display: flex; justify-content: space-between; gap: 12px; font-size: 13px; color: var(--on-night-muted); }
+.rv { position: absolute; top: 0; bottom: 0; width: 51%; background: repeating-linear-gradient(90deg, var(--night-2) 0 10px, var(--night) 10px 20px); z-index: 2; }
+.rv.l { left: 0; transform-origin: left center; animation: rvL 1.6s cubic-bezier(.7,0,.2,1) .45s both; }
+.rv.r { right: 0; transform-origin: right center; animation: rvR 1.6s cubic-bezier(.7,0,.2,1) .45s both; }
+@keyframes rvL { from { transform: none; } to { transform: translateX(-100%); } }
+@keyframes rvR { from { transform: none; } to { transform: translateX(100%); } }
+.disclaimer { margin: 12px 4px 0; font-size: 13.5px; line-height: 1.45; color: var(--muted); }
+.sec-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-top: 32px; }
+.h2.sec { margin-top: 32px; }
+.rank { margin-top: 14px; background: var(--surface); border-radius: 20px; padding: 4px 6px; }
+.rank-row { width: 100%; display: grid; grid-template-columns: 22px minmax(0, 1fr) 56px; column-gap: 10px; row-gap: 7px; align-items: center; padding: 12px 10px; border: 0; border-bottom: 1px solid var(--rule); background: transparent; text-align: left; cursor: pointer; border-radius: 14px; }
+.rank-row:last-child { border-bottom: 0; }
+.rank-row:hover { background: var(--bg); }
+.rank-i { font-size: 13px; color: var(--muted); }
+.rank-n { display: flex; flex-wrap: wrap; align-items: baseline; column-gap: 8px; min-width: 0; }
+.rank-n b { font-weight: 600; font-size: 16px; }
+.rank-n small { font-size: 12.5px; color: var(--muted); }
+.rank-p { font-family: var(--font-d); font-weight: 600; font-size: 18px; text-align: right; }
+.rank-bar { grid-column: 2; height: 6px; background: var(--surface-2); border-radius: 999px; overflow: hidden; }
+.rank-bar i { display: block; height: 100%; background: var(--ink); border-radius: 999px; }
+.rank-bar i.lead { background: var(--accent); }
+.rank-f { font-size: 10px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--warn); text-align: right; }
+.note { font-size: 13px; line-height: 1.45; color: var(--muted); margin: 12px 4px 0; }
+.flag { font-size: 10px; letter-spacing: .06em; text-transform: uppercase; color: var(--warn); margin-right: 4px; }
+.heat-wrap { margin-top: 14px; overflow-x: auto; background: var(--surface); border-radius: 20px; padding: 10px; }
+.heat { border-collapse: separate; border-spacing: 3px; font-size: 13px; }
+.heat thead th { font-size: 11px; font-weight: 600; color: var(--muted); vertical-align: bottom; height: 96px; padding: 0 0 6px; }
+.heat thead th span { writing-mode: vertical-rl; transform: rotate(180deg); white-space: nowrap; }
+.heat tbody th { text-align: left; position: sticky; left: 0; background: var(--surface); padding: 0 8px 0 0; }
+.heat tbody th button { border: 0; background: none; padding: 0; font-weight: 600; font-size: 14px; cursor: pointer; white-space: nowrap; text-decoration: underline; text-decoration-color: var(--rule); text-underline-offset: 3px; }
+.heat td { width: 44px; min-width: 44px; height: 40px; text-align: center; border-radius: 9px; background: color-mix(in srgb, var(--accent) var(--p, 0%), var(--surface-2)); font-weight: 600; }
+.heat td.hi { color: var(--on-accent); }
+.heat td.na { background: transparent; color: var(--faint); }
+.pair { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 10px; margin-top: 14px; }
+.pair-card, .cmp { background: var(--surface); border-radius: 20px; padding: 16px 18px; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.pair-k { margin: 0; font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); }
+.pair-t { margin: -6px 0 0; font-size: 13px; color: var(--muted); }
+.pair-q, .cmp-q { font-family: var(--font-d); font-weight: 600; font-size: 18px; line-height: 1.25; letter-spacing: -0.01em; margin: 0; }
+.cmp-grid { display: grid; grid-template-columns: auto minmax(0, 1fr); column-gap: 14px; row-gap: 6px; margin: 0; font-size: 15px; line-height: 1.35; }
+.cmp-grid dt { color: var(--muted); }
+.cmp-grid dd { margin: 0; font-weight: 600; display: flex; flex-direction: column; gap: 2px; }
+.cmp-grid dd small { font-weight: 400; color: var(--muted); font-size: 13.5px; }
+.pair-src { margin: 0; display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; padding-top: 10px; border-top: 1px solid var(--rule); }
+.src { font-size: 12.5px; color: var(--muted); text-decoration: underline; text-decoration-color: var(--rule); text-underline-offset: 3px; display: inline-flex; align-items: center; gap: 4px; }
+.src:hover { color: var(--ink); }
+.badge { font-size: 10px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; border-radius: 999px; padding: 3px 8px; }
+.badge.est { background: var(--surface-2); color: var(--muted); }
+.badge.old { background: var(--warn-soft); color: var(--warn); }
+.actions { display: flex; flex-direction: column; gap: 10px; margin-top: 32px; }
+.actions-row { display: flex; justify-content: center; flex-wrap: wrap; }
+
+/* Fiche candidat */
+.sheet-back { position: fixed; inset: 0; z-index: 30; background: rgb(8 10 13 / .5); display: flex; align-items: flex-end; justify-content: center; animation: fade .2s both; }
+@keyframes fade { from { opacity: 0; } }
+.sheet { width: 100%; max-width: 640px; max-height: 90%; overflow-y: auto; background: var(--bg); border-radius: 26px 26px 0 0; padding: 0 18px calc(20px + env(safe-area-inset-bottom, 0px)); box-sizing: border-box; animation: up .32s cubic-bezier(.2,.8,.2,1) both; }
+@keyframes up { from { transform: translateY(40px); opacity: .4; } }
+.sheet-head { position: sticky; top: 0; background: var(--bg); padding: 10px 0 14px; z-index: 1; }
+.grab { display: block; width: 40px; height: 5px; border-radius: 3px; background: var(--rule); margin: 0 auto 8px; }
+.sheet-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+.sheet-top p { margin: 2px 0 0; }
+.sheet-h { font-family: var(--font-d); font-size: 28px; font-weight: 600; letter-spacing: -0.025em; margin: 4px 0 0; }
+.sheet-score { margin: 10px 0 0; font-size: 15px; }
+.sheet-score .num:first-child { font-family: var(--font-d); font-weight: 700; font-size: 20px; color: var(--accent); }
+.cand-note { margin: 10px 0 0; font-size: 13.5px; line-height: 1.45; color: var(--warn); background: var(--warn-soft); border-radius: 12px; padding: 10px 12px; }
+.sheet-list { display: flex; flex-direction: column; gap: 10px; }
+.sheet-foot { padding-top: 16px; }
+.cmp-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+.agree { flex: none; font-size: 10.5px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; border-radius: 999px; padding: 4px 9px; }
+.agree.ok { background: var(--accent-soft); color: var(--accent); }
+.agree.mid { background: var(--surface-2); color: var(--muted); }
+.agree.ko { background: var(--warn-soft); color: var(--warn); }
+.pad { padding: 20px 4px; }
+.copybox { border-radius: 26px 26px 0 0; padding-top: 20px; display: flex; flex-direction: column; gap: 12px; }
+.copybox textarea { width: 100%; box-sizing: border-box; border-radius: 14px; border: 1px solid var(--rule); background: var(--surface); padding: 12px; font-size: 14px; resize: none; }
+
+/* Révision */
+.rev-group { margin-top: 26px; display: flex; flex-direction: column; gap: 8px; }
+.rev-group .h2 { margin-bottom: 4px; }
+.rev-item { display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: 12px; row-gap: 4px; align-items: center; width: 100%; padding: 14px 16px; border: 0; border-radius: 16px; background: var(--surface); text-align: left; cursor: pointer; }
+.rev-item:hover { box-shadow: inset 0 0 0 1.5px var(--ink); }
+.rev-q { font-size: 15px; font-weight: 500; line-height: 1.35; }
+.rev-a { grid-column: 1; font-size: 13.5px; font-weight: 600; color: var(--accent); }
+.rev-item svg { grid-row: 1 / span 2; grid-column: 2; color: var(--muted); }
+
+/* Programmes */
+.prog-head { padding-top: 8px; }
+.blind { margin-top: 18px; display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; background: var(--accent-soft); border-radius: var(--r); padding: 12px 12px 12px 16px; }
+.blind p { margin: 0; font-size: 14.5px; font-weight: 500; flex: 1 1 220px; }
+.qlist { display: flex; flex-direction: column; gap: 10px; margin-top: 14px; }
+.qcard { background: var(--surface); border-radius: 20px; padding: 18px 18px 8px; min-width: 0; }
+.qcard.slim { padding-bottom: 16px; }
+.qcard-q { font-family: var(--font-d); font-weight: 600; font-size: 19px; line-height: 1.25; letter-spacing: -0.01em; margin: 0; text-wrap: balance; }
+h4.qcard-q { font-size: 17px; }
+.qcard-k { display: block; font-family: var(--font-b); font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+.qcard-a { margin: 10px 0 0; font-size: 14.5px; color: var(--muted); }
+.qcard-a b { color: var(--accent); margin-right: 4px; }
+.pos-list { margin-top: 12px; }
+.pos-row { display: grid; grid-template-columns: minmax(0, 11rem) minmax(0, 1fr); gap: 4px 16px; padding: 12px 0; border-top: 1px solid var(--rule); }
+.pos-c { font-weight: 600; font-size: 15px; }
+.pos-row.none .pos-c { color: var(--muted); font-weight: 500; }
+.pos-b, .pos-solo { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.pos-solo { margin-top: 10px; }
+.pos-v { font-weight: 600; font-size: 15px; color: var(--ink); }
+.pos-note { font-size: 14px; color: var(--muted); line-height: 1.4; }
+.pos-src { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; margin-top: 2px; }
+.pos-none { font-size: 14px; color: var(--faint); }
+.cand-card { margin-top: 16px; background: var(--surface); border-radius: 20px; padding: 18px; }
+.cand-h { font-family: var(--font-d); font-size: 30px; font-weight: 600; letter-spacing: -0.025em; margin: 0; }
+.cand-card p { margin: 4px 0 0; }
+.cand-sec { margin-top: 26px; }
+.face-pick { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 18px; }
+.sel { display: flex; flex-direction: column; gap: 6px; font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.sel select { height: 48px; border-radius: 14px; border: 1.5px solid var(--rule); background: var(--surface); padding: 0 12px; font-size: 15px; font-weight: 600; letter-spacing: 0; text-transform: none; color: var(--ink); }
+.face { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin-top: 12px; }
+.face > div { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.face-c { font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-bottom: 2px; }
+@media (max-width: 560px) {
+  .pos-row { grid-template-columns: 1fr; }
+  .face { grid-template-columns: 1fr; gap: 12px; }
+}
+@media (min-width: 760px) {
+  .progs .qlist { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; }
+  .progs .qlist .qcard:not(.slim) { grid-column: 1 / -1; }
+}
+
+/* Méthode */
+.prose { padding-top: 8px; padding-bottom: 40px; max-width: 64ch; }
+.prose h2 { font-family: var(--font-d); font-size: 22px; font-weight: 600; letter-spacing: -0.015em; margin: 32px 0 8px; }
+.prose p, .prose li { font-size: 16px; line-height: 1.6; color: var(--ink-2); }
+.prose ul { padding-left: 20px; }
+.prose li { margin-bottom: 6px; }
+.prose a { color: var(--accent); text-underline-offset: 3px; }
+.srcs li { font-size: 14.5px; }
+
+.toast { position: fixed; left: 50%; bottom: calc(24px + env(safe-area-inset-bottom, 0px)); transform: translate(-50%, 20px); background: var(--ink); color: var(--bg); padding: 12px 18px; border-radius: 999px; font-weight: 600; font-size: 14.5px; opacity: 0; pointer-events: none; transition: opacity .2s, transform .2s; z-index: 50; }
+.toast.on { opacity: 1; transform: translate(-50%, 0); }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .001ms !important; animation-delay: 0s !important; transition-duration: .001ms !important; }
+}
+</style>
+<div id="app"></div>
+<script>
+/* Isoloir — données. Positions : [index de réponse, clé de source, note, 'est' si estimée] */
+const MAJ = "11 octobre 2026";
+
+const SRC = {
+  ps_ret: { l: "Public Sénat, 30 sept. 2026", u: "https://www.publicsenat.fr/actualites/politique/reculer-ou-avancer-lage-legal-avec-ou-sans-capitalisation-ce-que-proposent-les-principaux-candidats-a-lelection-presidentielle-sur-les-retraites" },
+  ps_fam: { l: "Public Sénat, 9 oct. 2026", u: "https://www.publicsenat.fr/actualites/politique/politique-familiale-allocations-creches-que-proposent-les-candidats-a-la-presidentielle" },
+  eu_ph: { l: "Euronews, 9 oct. 2026", u: "https://fr.euronews.com/2026/10/09/presidentielle-2027-edouard-philippe-mise-sur-le-travail-et-la-reduction-des-depenses-publ" },
+  eu_rn: { l: "Euronews, 7 oct. 2026", u: "https://fr.euronews.com/2026/10/07/france-le-gouvernement-tire-a-boulets-rouges-sur-le-contre-budget-de-marine-le-pen" },
+  ps_rn140: { l: "Public Sénat, 6 oct. 2026", u: "https://www.publicsenat.fr/actualites/politique/140-milliards-deuros-deconomies-dici-2032-leffort-radical-propose-par-marine-le-pen-pour-redresser-les-f" },
+  ap_rn: { l: "Acteurs publics, 6 oct. 2026", u: "https://acteurspublics.fr/articles/la-reforme-de-letat-et-des-collectivites-au-coeur-des-economies-programmees-par-le-rn/" },
+  ps_rncb: { l: "Public Sénat, contre-budget du RN", u: "https://www.publicsenat.fr/actualites/economie/contre-budget-du-rn-des-propositions-qui-manquent-de-credibilite-economique-mais-trahissent-une-veritable-coherence-doctrinale" },
+  pge_rn: { l: "Planète Grandes Écoles, 6 oct. 2026", u: "https://www.planetegrandesecoles.com/?p=130950" },
+  e1_ret: { l: "Europe 1, 2026", u: "https://www.europe1.fr/node/940316" },
+  cj_ret: { l: "Le Club des juristes, sept. 2026", u: "https://www.leclubdesjuristes.com/en-bref/presidentielle-2027-bruno-retailleau-veut-supprimer-le-droit-du-sol-par-referendum-17273/" },
+  ps_const: { l: "Public Sénat, 2026", u: "https://www.publicsenat.fr/actualites/politique/referendum-sur-limmigration-primaute-du-droit-national-le-projet-de-bruno-retailleau-est-il-faisable" },
+  e1_fv: { l: "Europe 1, juil. 2026", u: "https://www.europe1.fr/node/963783" },
+  e1_duel: { l: "Europe 1, juin 2026", u: "https://www.europe1.fr/politique/presidentielle-2027-face-au-duel-attal-philippe-bruno-retailleau-cherche-a-se-distinguer-938546" },
+  sel: { l: "Selectra, débat du Medef 2026", u: "https://selectra.info/finance/actualites/marche/debat-medef-2027-dette-propositions-candidats-consequences-epargne" },
+  lcp_gl: { l: "LCP, 2026", u: "https://lcp.fr/actualites/presidentielle-raphael-glucksmann-devoile-les-premieres-lignes-de-son-possible-programme" },
+  ps_z: { l: "Public Sénat, sept. 2026", u: "https://www.publicsenat.fr/actualites/politique/eric-zemmour-officialise-sa-candidature-a-la-presidentielle-2027" },
+  ps_voile: { l: "Public Sénat, d'après Le Monde", u: "https://www.publicsenat.fr/actualites/non-classe/retailleau-lr-sur-l-immigration-macron-doit-agir-au-lieu-de-faire-des-clins-d-oeil" },
+  v_lepen: { l: "Programme du RN (rassemblementnational.fr), via Votons 2027", u: "https://votons-2027.fr/candidats/le-pen/programme" },
+  v_philippe: { l: "Programme (edouardphilippe.fr), via Votons 2027", u: "https://votons-2027.fr/candidats/philippe/programme" },
+  v_attal: { l: "Programme (attalpresident.fr), via Votons 2027", u: "https://votons-2027.fr/candidats/attal/programme" },
+  v_retailleau: { l: "Programme (republicains.fr), via Votons 2027", u: "https://votons-2027.fr/candidats/retailleau/programme" },
+  v_glucksmann: { l: "Programme « L'acte I » (place-publique.eu), via Votons 2027", u: "https://votons-2027.fr/candidats/glucksmann/programme" },
+  v_melenchon: { l: "L'Avenir en commun (melenchon2027.fr), via Votons 2027", u: "https://votons-2027.fr/candidats/melenchon/programme" },
+  v_mel_comp: { l: "Programmes LFI et Écologistes, via Votons 2027", u: "https://votons-2027.fr/comparer/melenchon-vs-tondelier" },
+  v_tondelier: { l: "Projet 2027 (lesecologistes.fr), via Votons 2027", u: "https://votons-2027.fr/candidats/tondelier/programme" },
+  v_ruffin: { l: "Cahiers de campagne (nouspresident.fr), via Votons 2027", u: "https://votons-2027.fr/candidats/ruffin/programme" },
+  v_roussel: { l: "Programme PCF 2022 « La France des jours heureux », via Votons 2027", u: "https://votons-2027.fr/candidats/roussel/programme", old: true },
+  v_zemmour: { l: "Programme Reconquête des européennes 2024, via Votons 2027", u: "https://votons-2027.fr/candidats/zemmour/programme", old: true }
+};
+
+const CANDS = [
+  { id: "lepen", n: "Marine Le Pen", p: "Rassemblement national", note: "Condamnation confirmée en appel en juillet 2026. La Cour de cassation doit statuer au plus tard début avril 2027." },
+  { id: "philippe", n: "Édouard Philippe", p: "Horizons" },
+  { id: "attal", n: "Gabriel Attal", p: "Renaissance" },
+  { id: "retailleau", n: "Bruno Retailleau", p: "Les Républicains" },
+  { id: "glucksmann", n: "Raphaël Glucksmann", p: "Place publique · candidat du PS", note: "Désigné le 11 octobre 2026 candidat du PS et de Place publique, avec environ 66 % des voix dès le premier tour de la primaire." },
+  { id: "melenchon", n: "Jean-Luc Mélenchon", p: "La France insoumise" },
+  { id: "tondelier", n: "Marine Tondelier", p: "Les Écologistes", note: "Les adhérents votent du 10 au 13 décembre sur le maintien de sa candidature." },
+  { id: "ruffin", n: "François Ruffin", p: "Debout !" },
+  { id: "roussel", n: "Fabien Roussel", p: "Parti communiste", note: "Positions tirées de son programme 2022, en attendant celui de 2027." },
+  { id: "zemmour", n: "Éric Zemmour", p: "Reconquête", note: "Positions tirées surtout du programme européen 2024 de Reconquête." }
+];
+
+const THEMES = [
+  { id: "retraites", n: "Retraites", d: "Âge de départ, durée de cotisation, financement." },
+  { id: "travail", n: "Travail & salaires", d: "Smic, temps de travail, chômage." },
+  { id: "impots", n: "Impôts", d: "Qui paie quoi, et combien." },
+  { id: "budget", n: "Budget & État", d: "Dette, dépenses publiques, fonction publique." },
+  { id: "immigration", n: "Immigration", d: "Entrées, asile, nationalité, droits." },
+  { id: "securite", n: "Sécurité & justice", d: "Peines, prisons, police." },
+  { id: "energie", n: "Énergie & climat", d: "Nucléaire, éolien, transports." },
+  { id: "europe", n: "Europe & monde", d: "Union européenne, Ukraine, défense, commerce." },
+  { id: "institutions", n: "Institutions", d: "Mode de scrutin, référendum, Constitution." },
+  { id: "sante", n: "Santé", d: "Remboursements, accès aux soins." },
+  { id: "societe", n: "Société", d: "Fin de vie, GPA, cannabis, laïcité." },
+  { id: "ecole", n: "École & famille", d: "Classes, Parcoursup, allocations, logement." }
+];
+
+/* f : p = paliers, j = jauge à crans, n = pour/contre en 5 nuances, a = arbitrage. x : fait partie du parcours express. */
+const QS = [
+  { id: "r1", t: "retraites", f: "p", x: 1, q: "L'âge légal de départ à la retraite devrait être fixé à…", now: "62 ans et 9 mois : la réforme de 2023 est suspendue jusqu'à la présidentielle.", nowSrc: "ps_ret", scale: "Du plus tôt au plus tard",
+    o: ["60 ans", "62 ans", "63 ans", "64 ans", "65 ans ou plus"], cat: { l: "Plus d'âge légal", s: "Seule la durée de cotisation compte" },
+    P: { lepen: [1, "ps_ret", "62 ans, et 60 ans pour qui a commencé avant 20 ans"], philippe: [4, "ps_ret", "65 ans en moins de dix ans"], attal: [5, "ps_ret", "Un système universel fondé sur la durée de cotisation"], retailleau: [2, "ps_ret", "63 ans minimum, taux plein à 65 ans"], glucksmann: [1, "ps_ret", "Abroger la réforme de 2023, sans âge cible affiché"], melenchon: [0, "ps_ret", "Retour à 62 ans, puis objectif 60 ans"], tondelier: [1, "ps_ret", "Abroger la réforme de 2023 et revenir à 62 ans"], roussel: [0, "v_roussel", "Retraite à 60 ans à taux plein"] } },
+  { id: "r2", t: "retraites", f: "n", q: "Une partie de la retraite devrait être financée par capitalisation, en complément de la répartition.", now: "Les pensions sont payées presque entièrement par les cotisations des actifs (répartition).",
+    P: { philippe: [4, "ps_ret", "Fonds collectif obligatoire et plan d'épargne retraite généralisé"], attal: [4, "ps_ret", "Un « vrai pilier » de capitalisation"], retailleau: [4, "ps_ret", "25 à 30 % de la retraite des nouveaux entrants"] } },
+  { id: "r3", t: "retraites", f: "p", q: "Pour une retraite à taux plein, il faudrait avoir cotisé…", now: "43 ans pour les générations nées à partir de 1965.", nowSrc: "ps_ret", scale: "De la plus courte à la plus longue",
+    o: ["40 ans", "42 ans", "43 ans", "45 ans"],
+    P: { lepen: [1, "ps_ret", "42 annuités, 40 pour qui a commencé avant 20 ans"], philippe: [3, "ps_ret", "45 annuités"] } },
+
+  { id: "t1", t: "travail", f: "j", x: 1, q: "Le Smic devrait…", now: "Il est revalorisé chaque année selon l'inflation, plus d'éventuels « coups de pouce ».",
+    o: ["Suivre l'inflation, sans coup de pouce", "Recevoir un coup de pouce modéré", "Passer à 1 600 € net par mois"], ol: ["Sans coup de pouce", "Coup de pouce", "1 600 € net"],
+    P: { glucksmann: [2, "v_glucksmann", "1 600 € net d'ici deux ans"], melenchon: [2, "v_melenchon", "1 600 € net immédiatement"], tondelier: [2, "v_tondelier", "2 000 € brut dès 2027, soit environ 1 570 € net"] } },
+  { id: "t2", t: "travail", f: "p", q: "La durée légale du travail devrait…", now: "35 heures par semaine.", scale: "De la plus courte à la plus longue",
+    o: ["Passer à 32 heures", "Rester à 35 heures", "Rester à 35 heures, avec des heures sup. facilitées", "Augmenter"],
+    P: { roussel: [0, "v_roussel", "32 heures sans baisse de salaire"], melenchon: [1, "v_melenchon", "Rétablir réellement les 35 heures, 32 heures dans les métiers pénibles"], philippe: [2, "eu_ph", "Pas de cotisations sur 2 heures de plus par semaine"], attal: [2, "v_attal", "Supprimer le plafond d'heures supplémentaires"], retailleau: [3, "v_retailleau", "Seuil annuel relevé de 1 607 à 1 623 heures"] } },
+  { id: "t3", t: "travail", f: "n", x: 1, q: "L'indemnisation chômage devrait durer moins longtemps, pour inciter à reprendre un emploi.", now: "Jusqu'à 18 mois pour les plus jeunes demandeurs d'emploi.", nowSrc: "eu_ph",
+    P: { philippe: [4, "eu_ph", "De 18 à 12 mois maximum pour les moins de 50 ans"], attal: [4, "v_attal", "Une réforme qui « incite au travail »"], glucksmann: [0, "v_glucksmann", "Abroger la dernière réforme de l'assurance chômage"] } },
+  { id: "t4", t: "travail", f: "n", q: "L'État devrait garantir un emploi aux chômeurs de longue durée, en généralisant « Territoires zéro chômeur ».",
+    P: { glucksmann: [4, "v_glucksmann"], ruffin: [4, "v_ruffin"] } },
+  { id: "t5", t: "travail", f: "n", q: "Tous les salaires devraient être indexés automatiquement sur l'inflation.", now: "Seul le Smic l'est ; les autres salaires se négocient.",
+    P: { ruffin: [4, "v_ruffin", "Comme jusqu'en 1982"], melenchon: [4, "v_melenchon"] } },
+  { id: "t6", t: "travail", f: "n", q: "Le Code du travail devrait être fortement simplifié, avec plus de place aux accords d'entreprise.",
+    P: { attal: [4, "v_attal", "Une « Constitution du travail » plus courte"], retailleau: [3, "v_retailleau", "Supprimer les 50 règles qui pèsent le plus sur les entreprises", "est"] } },
+
+  { id: "f1", t: "impots", f: "n", x: 1, q: "Créer un impôt minimum de 2 % sur le patrimoine des très grandes fortunes (« taxe Zucman »).",
+    P: { melenchon: [4, "v_melenchon"], tondelier: [4, "v_tondelier", "« Rétablir la fiscalité sur la grande fortune »"], roussel: [4, "v_roussel", "Rétablir et renforcer l'ISF"], glucksmann: [3, "lcp_gl", "Mettre fin à la « sécession des ultrariches »", "est"], philippe: [0, "v_philippe", "Aucun nouvel impôt pendant le quinquennat"], retailleau: [1, "v_retailleau", "Baisser de 40 Md€ la pression fiscale, cadre stable pendant cinq ans", "est"] } },
+  { id: "f2", t: "impots", f: "n", x: 1, q: "Baisser fortement les impôts de production des entreprises (CVAE, C3S, CFE…).",
+    P: { philippe: [4, "v_philippe", "50 Md€ de baisse, compensés par 50 Md€ d'aides publiques en moins"], lepen: [4, "ps_rncb", "Baisse de la CFE, de la C3S et de la CVAE"], retailleau: [4, "v_retailleau", "Réduire de 40 Md€ le « handicap fiscal » des entreprises"] } },
+  { id: "f3", t: "impots", f: "p", q: "La TVA sur l'énergie (carburants, gaz, électricité) devrait…", now: "Elle est pour l'essentiel au taux normal de 20 %.", scale: "Du plus élevé au plus bas",
+    o: ["Rester au taux normal", "Baisser temporairement quand les prix flambent", "Passer durablement à 5,5 %"],
+    P: { lepen: [2, "v_lepen", "De 20 % à 5,5 % sur carburants, fioul, gaz et électricité"] } },
+  { id: "f4", t: "impots", f: "n", q: "L'impôt sur le revenu devrait être plus progressif : plus de tranches, des taux plus élevés pour les hauts revenus.", now: "5 tranches, de 0 à 45 %.",
+    P: { melenchon: [4, "v_melenchon", "14 tranches au lieu de 5"] } },
+  { id: "f5", t: "impots", f: "n", q: "Taxer davantage les dividendes et les rachats d'actions des grandes entreprises.",
+    P: { ruffin: [4, "v_ruffin", "4 % sur les dividendes au-delà de 10 M€, 2 % en dessous"], lepen: [3, "pge_rn", "Une taxe sur les rachats d'actions dans son contre-budget"], philippe: [1, "v_philippe", "Aucun nouvel impôt pendant le quinquennat", "est"] } },
+
+  { id: "b1", t: "budget", f: "a", x: 1, q: "Pour les finances publiques, la priorité devrait être de…", now: "Déficit attendu autour de 5,4 % du PIB en 2026.", nowSrc: "eu_rn",
+    a: ["Réduire le déficit et la dette, quitte à freiner les dépenses", "Investir et financer les services publics, quitte à s'endetter davantage"],
+    P: { philippe: [0, "v_philippe", "Règle d'or dans la Constitution, déficit ramené à 2 % en fin de mandat"], attal: [1, "v_attal", "« Frein d'urgence » sur les dépenses sociales", "est"], lepen: [1, "eu_rn", "140 Md€ d'économies d'ici 2032, avec 30 Md€ de baisses d'impôts", "est"], melenchon: [4, "v_melenchon", "Plan de 200 Md€ d'investissements", "est"], roussel: [4, "v_roussel", "Mettre fin à la règle des 3 % de déficit", "est"] } },
+  { id: "b2", t: "budget", f: "n", q: "Réduire le nombre de fonctionnaires en ne remplaçant pas une partie des départs à la retraite.",
+    P: { philippe: [4, "eu_ph", "Un départ sur trois non remplacé, environ 250 000 postes en cinq ans"], lepen: [3, "ap_rn", "Moins d'agents grâce à la suppression de la plupart des agences"], roussel: [0, "v_roussel", "Créer 500 000 emplois publics"] } },
+  { id: "b3", t: "budget", f: "n", q: "Restructurer une partie de la dette publique, notamment celle détenue par la Banque centrale européenne.",
+    P: { melenchon: [4, "sel"], philippe: [0, "sel", "Refuse toute annulation de dette"], roussel: [3, "v_roussel", "Mettre fin à l'indépendance de la BCE", "est"] } },
+  { id: "b4", t: "budget", f: "n", q: "Inscrire dans la Constitution une « règle d'or » qui oblige à réduire les déficits.",
+    P: { philippe: [4, "v_philippe"], roussel: [0, "v_roussel", "En finir avec la règle des 3 %", "est"] } },
+
+  { id: "i1", t: "immigration", f: "j", x: 1, q: "Le nombre d'étrangers admis légalement en France chaque année devrait…",
+    o: ["Augmenter", "Rester stable", "Baisser", "Être divisé par deux", "Être réduit au minimum"], ol: ["Augmenter", "Stable", "Baisser", "Diviser par deux", "Au minimum"],
+    P: { melenchon: [0, "v_melenchon", "Faciliter les visas, régulariser travailleurs et étudiants"], tondelier: [1, "v_tondelier", "Créer des voies légales et sécurisées", "est"], glucksmann: [1, "v_glucksmann", "Créer des voies légales d'immigration de travail", "est"], attal: [2, "v_attal", "« Accueillir moins pour accueillir mieux »"], retailleau: [2, "e1_ret", "Réduire l'immigration légale"], philippe: [3, "eu_ph", "Revenir bien en dessous de 200 000 titres par an"], lepen: [4, "v_lepen", "Asile traité à l'étranger, aides réservées aux Français", "est"], zemmour: [4, "ps_z", "Renvoyer les étrangers sans emploi depuis un an"] } },
+  { id: "i2", t: "immigration", f: "n", x: 1, q: "Supprimer le droit du sol : naître et grandir en France de parents étrangers ne donnerait plus accès à la nationalité.",
+    P: { lepen: [4, "v_lepen", "Nationalité par naturalisation seulement, sur critères de mérite"], retailleau: [4, "cj_ret", "Par référendum"], melenchon: [0, "v_melenchon", "Droit du sol intégral, rétabli partout"], tondelier: [0, "v_tondelier", "Droit du sol quelle que soit la situation des parents"] } },
+  { id: "i3", t: "immigration", f: "n", x: 1, q: "Réserver certaines aides sociales aux Français, ou les conditionner à plusieurs années de travail pour les étrangers.",
+    P: { lepen: [4, "v_lepen", "Aides réservées aux Français, cinq ans de travail pour certaines"], retailleau: [3, "v_retailleau", "Cinq ans de résidence et de travail pour les aides familiales"], tondelier: [0, "v_tondelier", "Garantir les droits fondamentaux, dont l'AME", "est"] } },
+  { id: "i4", t: "immigration", f: "n", q: "Expulser les étrangers en situation régulière qui restent plus d'un an sans emploi.",
+    P: { zemmour: [4, "ps_z"] } },
+  { id: "i5", t: "immigration", f: "p", x: 1, q: "Les demandes d'asile devraient…", scale: "Du plus ouvert au plus restrictif",
+    o: ["Être facilitées, avec des voies d'accès légales", "Être traitées comme aujourd'hui, mais plus vite", "Être refusées aux ressortissants de pays jugés « sûrs »", "N'être déposées que depuis l'étranger"],
+    P: { melenchon: [0, "v_melenchon", "Suspendre le règlement de Dublin"], tondelier: [0, "v_tondelier", "Voies légales, respect impartial du droit d'asile"], glucksmann: [0, "v_glucksmann", "Force européenne de sauvetage en mer, fin de Dublin"], philippe: [2, "v_philippe", "Une liste de pays sûrs votée chaque année"], attal: [2, "v_attal", "Pouvoir refouler aux frontières, réformer Schengen", "est"], lepen: [3, "v_lepen"], zemmour: [3, "v_zemmour", "Quitter la CEDH, renvois aux frontières de l'UE", "est"] } },
+  { id: "i6", t: "immigration", f: "n", q: "Fixer des quotas d'immigration, votés chaque année par le Parlement.",
+    P: { attal: [4, "v_attal", "Quotas contraignants par secteur et par région"], philippe: [4, "v_philippe", "Quotas pour l'immigration économique"] } },
+  { id: "i7", t: "immigration", f: "n", q: "Organiser un référendum sur l'immigration.",
+    P: { retailleau: [4, "e1_ret", "Après une révision de la Constitution"] } },
+
+  { id: "s1", t: "securite", f: "n", x: 1, q: "Rétablir des peines planchers : une peine minimale pour certaines infractions.",
+    P: { lepen: [4, "v_lepen"], philippe: [4, "v_philippe", "Pour les infractions les plus graves"] } },
+  { id: "s2", t: "securite", f: "j", q: "Le nombre de places de prison devrait…", now: "Les prisons françaises sont en forte surpopulation.",
+    o: ["Baisser, avec plus de peines hors les murs", "Rester stable", "Augmenter", "Augmenter fortement"], ol: ["Baisser", "Stable", "Augmenter", "Fortement"],
+    P: { tondelier: [0, "v_tondelier", "Un numerus clausus contre la surpopulation"], melenchon: [1, "v_melenchon", "En finir avec la surpopulation carcérale", "est"], attal: [2, "v_attal", "Construire davantage de places"], lepen: [3, "v_lepen", "85 000 places"] } },
+  { id: "s3", t: "securite", f: "n", q: "Instaurer une présomption de légitime défense pour les policiers et les gendarmes.",
+    P: { lepen: [4, "v_lepen"], melenchon: [0, "v_melenchon", "Abroger la loi de 2017 sur le refus d'obtempérer", "est"] } },
+  { id: "s4", t: "securite", f: "n", q: "Recréer une police de proximité, présente au quotidien dans les quartiers.",
+    P: { glucksmann: [4, "v_glucksmann"], melenchon: [4, "v_melenchon"], tondelier: [4, "v_tondelier"] } },
+  { id: "s5", t: "securite", f: "n", x: 1, q: "Créer un « état d'urgence » contre le narcotrafic, avec des moyens juridiques d'exception.",
+    P: { philippe: [4, "v_philippe", "Limité dans le temps et dans l'espace"], attal: [4, "e1_duel"], retailleau: [4, "e1_duel"] } },
+
+  { id: "e1", t: "energie", f: "j", x: 1, q: "En 2050, quelle part de notre électricité devrait venir du nucléaire ?", now: "Environ deux tiers de l'électricité produite en France.", gauge: "nuke",
+    o: ["Sortie du nucléaire", "Un quart", "La moitié", "Trois quarts", "Presque tout"], ol: ["0 %", "25 %", "50 %", "75 %", "90 %+"], pct: [0, 25, 50, 75, 92],
+    P: { melenchon: [0, "v_melenchon", "Sortir du nucléaire, abandonner les EPR"], philippe: [3, "v_philippe", "Relancer le nucléaire et développer les renouvelables", "est"], retailleau: [3, "v_retailleau", "Huit EPR2 de plus, pas de nouvel appel d'offres solaire ou éolien en mer", "est"], lepen: [4, "v_lepen", "Relancer le nucléaire, démanteler les éoliennes", "est"], zemmour: [4, "v_zemmour", "Plan de relance du nucléaire, fin des aides à l'éolien", "est"] } },
+  { id: "e2", t: "energie", f: "n", x: 1, q: "Arrêter les nouveaux projets d'éoliennes.",
+    P: { lepen: [4, "v_lepen", "Et démanteler progressivement les parcs existants"], zemmour: [4, "v_zemmour", "Fin des financements de l'éolien"], retailleau: [3, "v_retailleau", "Pas de nouvel appel d'offres éolien en mer tant que la demande n'augmente pas"], philippe: [1, "v_philippe", "Développer les renouvelables", "est"], ruffin: [1, "v_ruffin", "Relocaliser la fabrication d'éoliennes en France", "est"], melenchon: [0, "v_mel_comp", "100 % d'énergies renouvelables en 2050", "est"] } },
+  { id: "e3", t: "energie", f: "n", q: "Maintenir la fin de la vente des voitures thermiques neuves en 2035.",
+    P: { zemmour: [0, "v_zemmour", "Supprimer cette interdiction"], attal: [3, "v_attal", "Sortir des énergies fossiles, électrifier massivement", "est"] } },
+  { id: "e4", t: "energie", f: "n", q: "Abaisser la vitesse maximale sur autoroute à 110 km/h.", now: "130 km/h.",
+    P: { tondelier: [4, "v_tondelier", "Pour les véhicules thermiques"] } },
+  { id: "e5", t: "energie", f: "a", q: "Face au changement climatique, la priorité devrait être de…",
+    a: ["Réduire vite nos émissions, quitte à changer nos habitudes", "Préserver le pouvoir d'achat et l'activité, en évitant de nouvelles contraintes"],
+    P: { melenchon: [0, "v_melenchon", "−65 % d'émissions en 2030", "est"], tondelier: [0, "v_tondelier", "Plan d'adaptation, bio, 110 km/h", "est"], glucksmann: [0, "v_glucksmann", "Loi climat : −90 % en 2040", "est"], attal: [1, "v_attal", "Tripler le rythme de baisse des émissions", "est"], ruffin: [1, "v_ruffin", "Interdire la publicité pour les produits les plus polluants", "est"], philippe: [2, "v_philippe", "Adaptation, prix du carbone aux frontières", "est"], retailleau: [3, "v_retailleau", "Supprimer l'objectif zéro artificialisation nette", "est"], lepen: [3, "v_lepen", "Rendre aux ménages les subventions à l'éolien", "est"], zemmour: [4, "v_zemmour", "Supprimer l'interdiction des voitures thermiques en 2035", "est"] } },
+  { id: "e6", t: "energie", f: "n", q: "Interdire les vols intérieurs quand le même trajet existe en train en moins de 4 heures.", now: "Interdits seulement quand le train met moins de 2 h 30.", nowSrc: "v_ruffin",
+    P: { ruffin: [4, "v_ruffin"] } },
+
+  { id: "u1", t: "europe", f: "p", x: 1, q: "Face à l'Union européenne, la France devrait…", scale: "Du plus intégré au plus souverainiste",
+    o: ["Aller vers une Europe fédérale", "Approfondir l'UE sur la défense, l'industrie et l'investissement", "Rester dans l'UE sans aller plus loin", "Faire primer le droit français et s'affranchir des règles qui bloquent", "Sortir de l'UE"],
+    P: { attal: [0, "v_attal", "Référendum européen, président de l'Europe élu"], glucksmann: [0, "v_glucksmann", "Un traité de « réunification européenne » d'ici 2030"], tondelier: [1, "v_tondelier", "Un budget européen porté à 2 % du PIB en 2035"], philippe: [1, "v_philippe", "Achever le marché unique, union des marchés de capitaux"], retailleau: [3, "ps_const", "Faire primer le droit national sur certaines normes"], lepen: [3, "v_lepen", "Baisser la contribution, sortir du marché européen de l'électricité", "est"], zemmour: [3, "v_zemmour", "Modifier l'article 55 pour la primauté du droit national"], melenchon: [3, "v_mel_comp", "Désobéir aux traités qui bloquent son programme"], roussel: [3, "v_roussel", "En finir avec les 3 % et l'indépendance de la BCE", "est"] } },
+  { id: "u2", t: "europe", f: "n", x: 1, q: "Augmenter l'aide militaire à l'Ukraine.",
+    P: { glucksmann: [4, "v_glucksmann", "« Augmenter drastiquement »"], tondelier: [4, "v_tondelier"], attal: [4, "v_attal", "« Continuer sans relâche »"], philippe: [3, "eu_ph", "Soutien réaffirmé à l'Ukraine"], melenchon: [1, "v_melenchon", "Priorité à un cadre diplomatique pour un cessez-le-feu", "est"] } },
+  { id: "u3", t: "europe", f: "n", q: "Quitter le commandement intégré de l'OTAN.",
+    P: { melenchon: [4, "v_melenchon", "Puis, par étapes, l'organisation elle-même"], roussel: [4, "v_roussel", "Quitter l'OTAN"] } },
+  { id: "u4", t: "europe", f: "n", q: "Étendre la protection de la dissuasion nucléaire française à nos partenaires européens.",
+    P: { glucksmann: [4, "v_glucksmann"], zemmour: [0, "v_zemmour"] } },
+  { id: "u5", t: "europe", f: "j", q: "Le budget de la défense devrait…",
+    o: ["Baisser", "Rester au niveau actuel", "Augmenter", "Augmenter fortement"], ol: ["Baisser", "Stable", "Augmenter", "Fortement"],
+    P: { attal: [3, "v_attal", "« Poursuivre et amplifier » le réarmement"], philippe: [3, "v_philippe", "Réservistes portés de 45 000 à 250 000"], glucksmann: [3, "v_glucksmann", "Un fonds européen de défense de 500 Md€"], lepen: [2, "v_lepen", "55 Md€ par an"] } },
+  { id: "u6", t: "europe", f: "n", q: "Bloquer les nouveaux accords de libre-échange.",
+    P: { melenchon: [4, "v_melenchon", "Utiliser le droit de veto de la France"], zemmour: [4, "v_zemmour", "Moratoire et audit des accords"], retailleau: [2, "v_retailleau", "Des clauses de réciprocité dans tous les accords", "est"] } },
+  { id: "u7", t: "europe", f: "n", q: "Réduire la contribution de la France au budget de l'Union européenne.",
+    P: { lepen: [4, "ps_rn140", "9 Md€ d'économies sur la contribution"], zemmour: [4, "v_zemmour", "−20 %"], tondelier: [0, "v_tondelier", "Augmenter le budget européen", "est"], attal: [1, "v_attal", "Des investissements massifs en commun", "est"] } },
+
+  { id: "n1", t: "institutions", f: "n", x: 1, q: "Élire les députés à la proportionnelle.", now: "Scrutin majoritaire à deux tours, par circonscription.",
+    P: { lepen: [4, "v_lepen"], melenchon: [4, "v_melenchon"], glucksmann: [4, "v_glucksmann", "De préférence par circonscriptions régionales"], tondelier: [4, "v_tondelier", "Proportionnelle intégrale"] } },
+  { id: "n2", t: "institutions", f: "n", q: "Créer un référendum d'initiative citoyenne (RIC).",
+    P: { lepen: [4, "v_lepen"], melenchon: [4, "v_melenchon"] } },
+  { id: "n3", t: "institutions", f: "p", q: "La Constitution de la Ve République devrait…", scale: "Du changement le plus profond au plus léger",
+    o: ["Être remplacée par une VIe République", "Être réformée pour renforcer le Parlement", "Être modifiée pour élargir le référendum", "Rester pour l'essentiel inchangée"],
+    P: { melenchon: [0, "v_melenchon", "Une Assemblée constituante"], tondelier: [0, "v_mel_comp", "Une constituante tirée au sort et élue"], glucksmann: [1, "v_glucksmann", "Vote de confiance, fin du 49.3, suppression de l'article 16"], retailleau: [2, "ps_const", "Référendum élargi à l'immigration et à la justice"], attal: [2, "v_attal", "Une journée référendaire chaque année"], lepen: [2, "v_lepen", "RIC et proportionnelle", "est"] } },
+  { id: "n4", t: "institutions", f: "n", q: "Donner le droit de vote aux élections locales aux étrangers non européens.",
+    P: { melenchon: [4, "v_melenchon"], glucksmann: [4, "v_glucksmann"] } },
+  { id: "n5", t: "institutions", f: "n", q: "Abaisser l'âge du droit de vote à 16 ans.",
+    P: { glucksmann: [4, "v_glucksmann"] } },
+  { id: "n6", t: "institutions", f: "n", q: "Réduire le nombre de parlementaires.", now: "577 députés et 348 sénateurs.",
+    P: { attal: [4, "v_attal", "350 députés et 200 sénateurs"] } },
+
+  { id: "h1", t: "sante", f: "n", x: 1, q: "Rembourser intégralement les soins par la Sécurité sociale (« 100 % Sécu »).",
+    P: { melenchon: [4, "v_melenchon"], tondelier: [3, "v_tondelier", "Pour les soins essentiels au maintien de l'autonomie"], glucksmann: [3, "v_glucksmann", "Aller vers une Sécurité sociale unique", "est"], attal: [1, "v_attal", "« Frein d'urgence » sur les dépenses sociales", "est"] } },
+  { id: "h2", t: "sante", f: "n", q: "Obliger les médecins à assurer des gardes ou à s'installer dans les zones qui en manquent.",
+    P: { zemmour: [3, "v_zemmour", "Rétablir les gardes obligatoires"], lepen: [1, "v_lepen", "Privilégier de fortes incitations financières", "est"] } },
+  { id: "h3", t: "sante", f: "n", q: "Supprimer l'aide médicale d'État (AME) pour les étrangers en situation irrégulière, hors urgences.",
+    P: { zemmour: [4, "v_zemmour"], tondelier: [0, "v_tondelier", "Garantir l'accès à l'AME"] } },
+
+  { id: "o1", t: "societe", f: "n", x: 1, q: "Autoriser une aide à mourir pour les malades incurables, sous conditions strictes.", now: "Une loi en ce sens a été adoptée par l'Assemblée en troisième lecture le 30 juin 2026.", nowSrc: "e1_fv",
+    P: { philippe: [4, "e1_fv", "Soutient la réforme"], melenchon: [4, "v_melenchon"], tondelier: [4, "v_tondelier"], lepen: [2, "e1_fv", "Ne reviendrait pas sur le texte s'il est adopté", "est"], retailleau: [1, "e1_fv", "Réclamait un référendum sur le texte", "est"] } },
+  { id: "o2", t: "societe", f: "n", q: "Légaliser et encadrer la production, la vente et la consommation de cannabis.",
+    P: { tondelier: [4, "v_tondelier"] } },
+  { id: "o3", t: "societe", f: "n", q: "Autoriser la gestation pour autrui (GPA) en France.",
+    P: { attal: [3, "e1_duel", "« Ouvre la porte » à sa légalisation"], retailleau: [0, "e1_duel", "Une « ligne rouge »"], zemmour: [0, "v_zemmour", "Abolir la GPA dans toute l'Union européenne"] } },
+  { id: "o4", t: "societe", f: "n", q: "Interdire le port du voile dans l'espace public.",
+    P: { lepen: [4, "ps_voile", "Envisage un référendum"] } },
+
+  { id: "d1", t: "ecole", f: "j", q: "En primaire, le nombre d'élèves par classe devrait être limité à…",
+    o: ["Pas de plafond", "22 élèves", "20 élèves", "19 élèves ou moins"], ol: ["Sans plafond", "22", "20", "19 ou moins"],
+    P: { attal: [2, "v_attal", "Moins de 20 élèves par classe"], tondelier: [3, "v_tondelier", "19 en 2032, 12 en éducation prioritaire"], melenchon: [3, "v_melenchon", "Sous la moyenne européenne de 19"], glucksmann: [2, "v_glucksmann", "Moins d'élèves par enseignant", "est"] } },
+  { id: "d2", t: "ecole", f: "n", x: 1, q: "Supprimer Parcoursup et garantir à chaque bachelier l'accès à la formation de son choix.",
+    P: { melenchon: [4, "v_melenchon"], roussel: [4, "v_roussel", "Supprimer la sélection à l'entrée de l'université"], tondelier: [3, "v_tondelier", "Remplacer Parcoursup et MonMaster"], philippe: [2, "eu_ph", "Juge le système « stressant »", "est"], attal: [1, "v_attal", "« Démassifier » l'enseignement supérieur", "est"] } },
+  { id: "d3", t: "ecole", f: "n", q: "Interdire les réseaux sociaux aux moins de 15 ans.",
+    P: { attal: [4, "v_attal"] } },
+  { id: "d4", t: "ecole", f: "n", q: "Imposer l'uniforme à l'école primaire et au collège.",
+    P: { lepen: [4, "v_lepen"] } },
+  { id: "d5", t: "ecole", f: "n", q: "Verser une allocation familiale dès le premier enfant.", now: "Les allocations familiales commencent au deuxième enfant.",
+    P: { philippe: [4, "ps_fam", "350 € par mois, dégressifs selon l'impôt"], retailleau: [4, "ps_fam", "Un « revenu familial » de 240 € par mois"] } },
+  { id: "d6", t: "ecole", f: "n", q: "Donner la priorité aux familles françaises pour l'attribution des logements sociaux.",
+    P: { lepen: [4, "ps_fam", "La « priorité nationale »"] } },
+  { id: "d7", t: "ecole", f: "n", q: "Généraliser l'encadrement des loyers.",
+    P: { tondelier: [4, "v_tondelier"] } }
+];
+
+</script>
+<script>
+(function () {
+  "use strict";
+
+  /* ---------- Constantes ---------- */
+  const NU = ["Pas du tout d'accord", "Plutôt pas d'accord", "Partagé", "Plutôt d'accord", "Tout à fait d'accord"];
+  const NU_POS = ["Contre", "Plutôt contre", "Partagé", "Plutôt pour", "Pour"];
+  const IMP = [{ l: "Un peu", w: 0.5 }, { l: "Beaucoup", w: 1 }, { l: "Décisif", w: 2 }];
+  const PRIO_W = 1.5;
+  const K = 2;
+  const KEY = "isoloir.v1";
+  const SHARE_URL = (/^https?:$/.test(location.protocol) && !/claude/i.test(location.hostname))
+    ? location.origin + location.pathname
+    : "https://claude.ai/artifact/79SWy4BZimCKKDYzJBsnYm";
+
+  const QMAP = {}; QS.forEach(function (q) { QMAP[q.id] = q; });
+  const CMAP = {}; CANDS.forEach(function (c) { CMAP[c.id] = c; });
+  const TMAP = {}; THEMES.forEach(function (t) { TMAP[t.id] = t; });
+  const EXPRESS_N = QS.filter(function (q) { return q.x; }).length;
+
+  /* ---------- Utilitaires ---------- */
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
+  function shuffle(a) { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); const t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+  function firstName(c) { return c.n.split(" ")[0]; }
+  function lastName(c) { return c.n.split(" ").slice(1).join(" "); }
+  function nOpts(q) { return (q.f === "n" || q.f === "a") ? 5 : q.o.length; }
+  function isCat(q, v) { return !!q.cat && v === q.o.length; }
+  function agree(q, u, c) {
+    if (q.cat && (isCat(q, u) || isCat(q, c))) return u === c ? 1 : 0.25;
+    const n = nOpts(q);
+    return 1 - Math.abs(u - c) / (n - 1);
+  }
+  function ansLabel(q, v) {
+    if (v == null) return "Sans avis";
+    if (q.f === "n") return NU[v];
+    if (q.f === "a") {
+      if (v === 2) return "Entre les deux";
+      const side = v < 2 ? q.a[0] : q.a[1];
+      return (v === 0 || v === 4 ? "Nettement : " : "Plutôt : ") + side;
+    }
+    if (isCat(q, v)) return q.cat.l;
+    return q.o[v];
+  }
+  function posLabel(q, v) { return q.f === "n" ? NU_POS[v] : ansLabel(q, v); }
+
+  /* ---------- État ---------- */
+  function fresh() { return { mode: null, themes: THEMES.map(function (t) { return t.id; }), prio: [], order: [], idx: 0, ans: {}, done: false, revealed: false }; }
+  function load() { try { const raw = localStorage.getItem(KEY); if (!raw) return null; const s = JSON.parse(raw); return s && s.ans ? s : null; } catch (e) { return null; } }
+  function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) { /* stockage indisponible : on continue sans */ } }
+
+  let S = load() || fresh();
+  const V = {
+    screen: "home", view: "global", progTab: "theme", progTheme: THEMES[0].id, progCand: null,
+    faceA: null, faceB: null, sheet: null, sheetFilter: "all", edit: false, draft: null,
+    chapterSeen: -1, revealNow: false, candOrder: shuffle(CANDS.map(function (c) { return c.id; }))
+  };
+  V.progCand = V.candOrder[0]; V.faceA = V.candOrder[0]; V.faceB = V.candOrder[1];
+
+  /* ---------- Scores ---------- */
+  function scores() {
+    const res = CANDS.map(function (c) { return { c: c, sum: 0, w: 0, n: 0, th: {} }; });
+    let answered = 0;
+    Object.keys(S.ans).forEach(function (qid) {
+      const q = QMAP[qid]; const a = S.ans[qid];
+      if (!q || a.v == null) return;
+      answered++;
+      const w = IMP[a.imp == null ? 1 : a.imp].w * (S.prio.indexOf(q.t) >= 0 ? PRIO_W : 1);
+      res.forEach(function (r) {
+        const p = q.P[r.c.id]; if (!p) return;
+        const g = agree(q, a.v, p[0]);
+        r.sum += w * g; r.w += w; r.n++;
+        const t = r.th[q.t] || (r.th[q.t] = { sum: 0, w: 0, n: 0 });
+        t.sum += w * g; t.w += w; t.n++;
+      });
+    });
+    res.forEach(function (r) {
+      r.pct = Math.round(((r.sum + K * 0.5) / (r.w + K)) * 100);
+      r.ranked = r.n >= 3;
+      r.partial = r.n < Math.max(6, 0.3 * answered);
+    });
+    const ranked = res.filter(function (r) { return r.ranked; }).sort(function (a, b) { return b.pct - a.pct || b.n - a.n; });
+    const unranked = res.filter(function (r) { return !r.ranked; });
+    return { ranked: ranked, unranked: unranked, answered: answered };
+  }
+  window.__isoloirScores = function (state) { const keep = S; S = state; const r = scores(); S = keep; return r; };
+
+  /* ---------- Parcours ---------- */
+  function buildOrder() {
+    S.order = QS.filter(function (q) {
+      return S.themes.indexOf(q.t) >= 0 && (S.mode !== "express" || q.x);
+    }).map(function (q) { return q.id; });
+    S.idx = 0; S.done = false; S.revealed = false;
+  }
+  function curQ() { return QMAP[S.order[S.idx]]; }
+  function needsChapter(i) {
+    if (S.mode === "express" || V.edit) return false;
+    if (i === 0) return true;
+    return QMAP[S.order[i]].t !== QMAP[S.order[i - 1]].t;
+  }
+  function goQuestion(i) {
+    S.idx = Math.max(0, Math.min(i, S.order.length - 1)); save();
+    if (needsChapter(S.idx) && V.chapterSeen !== S.idx) { V.screen = "chapter"; }
+    else { V.screen = "question"; initDraft(); }
+    render();
+  }
+  function initDraft() {
+    const q = curQ(); const a = S.ans[q.id];
+    V.draft = { v: a ? a.v : undefined, imp: a && a.imp != null ? a.imp : 1 };
+  }
+  function commit(v) {
+    const q = curQ();
+    S.ans[q.id] = { v: v, imp: V.draft.imp };
+    save();
+    if (V.edit) { V.edit = false; V.screen = "review"; render(); return; }
+    if (S.idx >= S.order.length - 1) { S.done = true; save(); V.revealNow = !S.revealed; V.screen = "results"; V.view = "global"; render(); return; }
+    goQuestion(S.idx + 1);
+  }
+
+  /* ---------- Fragments ---------- */
+  const ICON = {
+    back: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>',
+    arrow: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>',
+    chev: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>',
+    close: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>',
+    scale: '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v16M7 20h10M5 8h14M5 8l-2.5 6a3 3 0 0 0 5 0L5 8zM19 8l-2.5 6a3 3 0 0 0 5 0L19 8z"/></svg>',
+    doc: '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5M10 13h6M10 17h6"/></svg>',
+    lock: '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10" rx="2.5"/><path d="M8.5 10.5V8a3.5 3.5 0 0 1 7 0v2.5"/></svg>',
+    ext: '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg>'
+  };
+  function wordmark() { return '<button class="wordmark" data-a="home" aria-label="Accueil Isoloir"><span class="mark" aria-hidden="true"></span>isoloir</button>'; }
+  function topbar(backAction, right) {
+    return '<div class="topbar">' +
+      (backAction ? '<button class="iconbtn" data-a="' + backAction + '" aria-label="Retour">' + ICON.back + '</button>' : '<span class="iconspace"></span>') +
+      wordmark() + '<div class="topright">' + (right || "") + '</div></div>';
+  }
+  function srcLink(key) {
+    const s = SRC[key]; if (!s) return "";
+    return '<a class="src" href="' + esc(s.u) + '" target="_blank" rel="noopener">' + esc(s.l) + ICON.ext + '</a>';
+  }
+  function badges(p) {
+    let b = "";
+    if (p[3] === "est") b += '<span class="badge est" title="Position déduite de ses mesures, pas d\'une réponse directe à la question">Estimée</span>';
+    if (SRC[p[1]] && SRC[p[1]].old) b += '<span class="badge old" title="Programme d\'une élection précédente">Programme antérieur</span>';
+    return b;
+  }
+
+  /* ---------- Écrans ---------- */
+  const SCREENS = {};
+
+  SCREENS.home = function () {
+    const started = S.order.length > 0 && !S.done;
+    const answeredCount = Object.keys(S.ans).filter(function (k) { return S.order.indexOf(k) >= 0; }).length;
+    let ctas;
+    if (S.done) {
+      ctas = '<button class="btn primary block" data-a="results">Voir mes résultats' + ICON.arrow + '</button>' +
+        '<button class="btn ghost block" data-a="programmes">Comparer les programmes</button>' +
+        '<button class="btn link" data-a="restart">Refaire le test</button>';
+    } else if (started) {
+      ctas = '<button class="btn primary block" data-a="resume">Reprendre <span class="num">· ' + answeredCount + '/' + S.order.length + '</span>' + ICON.arrow + '</button>' +
+        '<button class="btn ghost block" data-a="programmes">Comparer les programmes</button>' +
+        '<button class="btn link" data-a="restart">Recommencer à zéro</button>';
+    } else {
+      ctas = '<button class="btn primary block" data-a="start">Trouver mes affinités' + ICON.arrow + '</button>' +
+        '<button class="btn ghost block" data-a="programmes">Comparer les programmes</button>';
+    }
+    return '<main class="screen home">' +
+      '<div class="hero">' +
+      '<div class="booth" aria-hidden="true"><span class="rod"></span><div class="cabin"><div class="ballot"><span class="ballot-k">Bulletin</span><span class="ballot-y">2027</span><span class="ballot-l"></span><span class="ballot-l s"></span></div><span class="curtain l"></span><span class="curtain r"></span></div><span class="floor"></span></div>' +
+      '<p class="eyebrow center">Présidentielle 2027</p>' +
+      '<h1 class="brand" tabindex="-1">isoloir</h1>' +
+      '<p class="tagline">Réponds à des questions précises sur les grands sujets de la campagne. Découvre de quels candidats tu es le plus proche.</p>' +
+      '<ul class="facts"><li><b class="num">' + QS.length + '</b> questions</li><li><b class="num">' + CANDS.length + '</b> candidats</li><li>Positions <b>sourcées</b></li></ul>' +
+      '</div>' +
+      '<div class="ctas">' + ctas + '</div>' +
+      '<p class="home-foot">Mis à jour le ' + MAJ + ' · <button class="inline-link" data-a="methode">Méthode et sources</button></p>' +
+      '</main>';
+  };
+
+  SCREENS.pacte = function () {
+    return '<main class="screen">' + topbar("home") +
+      '<div class="stack-l">' +
+      '<p class="eyebrow">Avant de commencer</p>' +
+      '<h1 class="title" tabindex="-1">Trois engagements</h1>' +
+      '<ol class="pact">' +
+      '<li><span class="pact-ic">' + ICON.scale + '</span><div><h2>Une proximité, pas une consigne</h2><p>L\'app mesure à quel point tes réponses rejoignent les positions de chaque candidat. Le choix final reste le tien.</p></div></li>' +
+      '<li><span class="pact-ic">' + ICON.doc + '</span><div><h2>Des positions sourcées et datées</h2><p>Chaque position renvoie à un programme ou une déclaration. Quand on ne la connaît pas, on le dit, et elle ne compte pas dans le score.</p></div></li>' +
+      '<li><span class="pact-ic">' + ICON.lock + '</span><div><h2>Rien ne sort de l\'isoloir</h2><p>Tes réponses restent sur ton appareil. Pas de compte, pas d\'envoi, pas de statistiques.</p></div></li>' +
+      '</ol></div>' +
+      '<div class="footer-bar"><button class="btn primary grow" data-a="toMode">C\'est parti' + ICON.arrow + '</button></div>' +
+      '</main>';
+  };
+
+  SCREENS.mode = function () {
+    const full = QS.length;
+    return '<main class="screen">' + topbar("pacte") +
+      '<div class="stack-l">' +
+      '<p class="eyebrow">Ton parcours</p>' +
+      '<h1 class="title" tabindex="-1">Combien de temps as-tu ?</h1>' +
+      '<div class="choices">' +
+      '<button class="choice" data-a="pickMode" data-v="express"><span class="choice-h">Express</span><span class="choice-m num">' + EXPRESS_N + ' questions · 6 min</span><span class="choice-d">Les sujets qui départagent le plus, un par thème ou presque.</span></button>' +
+      '<button class="choice rec" data-a="pickMode" data-v="complet"><span class="choice-top"><span class="choice-h">Complet</span><span class="pill-rec">Recommandé</span></span><span class="choice-m num">' + full + ' questions · 15 min</span><span class="choice-d">Tous les thèmes. Plus de questions, donc un résultat plus fiable.</span></button>' +
+      '<button class="choice" data-a="pickMode" data-v="carte"><span class="choice-h">À la carte</span><span class="choice-m">Tu choisis tes thèmes</span><span class="choice-d">Pour aller droit aux sujets qui t\'intéressent.</span></button>' +
+      '</div></div></main>';
+  };
+
+  SCREENS.themes = function () {
+    const sel = S.themes;
+    return '<main class="screen">' + topbar("toMode") +
+      '<div class="stack-l">' +
+      '<p class="eyebrow">À la carte</p>' +
+      '<h1 class="title" tabindex="-1">Quels thèmes veux-tu aborder ?</h1>' +
+      '<div class="chips">' + THEMES.map(function (t) {
+        const n = QS.filter(function (q) { return q.t === t.id; }).length;
+        return '<button class="chip" data-a="toggleTheme" data-v="' + t.id + '" aria-pressed="' + (sel.indexOf(t.id) >= 0) + '">' + esc(t.n) + '<span class="chip-n num">' + n + '</span></button>';
+      }).join("") + '</div></div>' +
+      '<div class="footer-bar"><button class="btn primary grow" data-a="toPrio"' + (sel.length ? "" : " disabled") + '>Continuer' + ICON.arrow + '</button></div></main>';
+  };
+
+  SCREENS.prio = function () {
+    const avail = THEMES.filter(function (t) { return S.themes.indexOf(t.id) >= 0; });
+    return '<main class="screen">' + topbar(S.mode === "carte" ? "toThemes" : "toMode") +
+      '<div class="stack-l">' +
+      '<p class="eyebrow">Tes priorités</p>' +
+      '<h1 class="title" tabindex="-1">Quels sujets comptent le plus pour toi ?</h1>' +
+      '<p class="lead">Choisis jusqu\'à trois thèmes. Ils pèseront davantage dans ton résultat.</p>' +
+      '<div class="chips">' + avail.map(function (t) {
+        const on = S.prio.indexOf(t.id) >= 0;
+        const full = !on && S.prio.length >= 3;
+        return '<button class="chip" data-a="togglePrio" data-v="' + t.id + '" aria-pressed="' + on + '"' + (full ? " disabled" : "") + '>' + esc(t.n) + '</button>';
+      }).join("") + '</div>' +
+      '<p class="counter num" aria-live="polite">' + S.prio.length + ' sur 3</p></div>' +
+      '<div class="footer-bar"><button class="btn link" data-a="beginQuiz" data-v="skip">Passer</button><button class="btn primary grow" data-a="beginQuiz"' + (S.prio.length ? "" : " disabled") + '>Commencer' + ICON.arrow + '</button></div></main>';
+  };
+
+  function progressBar() {
+    const themesInRun = [];
+    S.order.forEach(function (id) { const t = QMAP[id].t; if (themesInRun.indexOf(t) < 0) themesInRun.push(t); });
+    const curT = curQ().t;
+    return '<div class="progress" role="img" aria-label="Thème ' + (themesInRun.indexOf(curT) + 1) + ' sur ' + themesInRun.length + '">' +
+      themesInRun.map(function (t) {
+        const ids = S.order.filter(function (id) { return QMAP[id].t === t; });
+        const done = ids.filter(function (id) { return S.ans[id]; }).length;
+        const pct = Math.round(done / ids.length * 100);
+        return '<span class="seg-p' + (t === curT ? " cur" : "") + '"><i style="width:' + pct + '%"></i></span>';
+      }).join("") + '</div>';
+  }
+
+  SCREENS.chapter = function () {
+    const q = curQ(); const t = TMAP[q.t];
+    const themesInRun = [];
+    S.order.forEach(function (id) { const tt = QMAP[id].t; if (themesInRun.indexOf(tt) < 0) themesInRun.push(tt); });
+    const n = S.order.filter(function (id) { return QMAP[id].t === q.t; }).length;
+    const prio = S.prio.indexOf(q.t) >= 0;
+    return '<main class="screen chapter">' + topbar(S.idx > 0 ? "prevQ" : "toPrioBack", '<span class="count num">' + (S.idx) + '/' + S.order.length + '</span>') +
+      progressBar() +
+      '<div class="chapter-body">' +
+      '<p class="eyebrow num">Chapitre ' + (themesInRun.indexOf(q.t) + 1) + ' sur ' + themesInRun.length + '</p>' +
+      '<h1 class="chapter-h" tabindex="-1">' + esc(t.n) + '</h1>' +
+      '<p class="lead">' + esc(t.d) + '</p>' +
+      '<p class="chapter-meta num">' + n + (n > 1 ? " questions" : " question") + (prio ? ' · <span class="pill-prio">Prioritaire</span>' : "") + '</p>' +
+      '</div>' +
+      '<div class="footer-bar"><button class="btn primary grow" data-a="enterChapter">Commencer le chapitre' + ICON.arrow + '</button></div></main>';
+  };
+
+  function nowLine(q) {
+    if (!q.now) return "";
+    return '<p class="now"><span class="pill">Aujourd\'hui</span><span>' + esc(q.now) + (q.nowSrc ? ' <a class="now-src" href="' + esc(SRC[q.nowSrc].u) + '" target="_blank" rel="noopener">Source</a>' : "") + '</span></p>';
+  }
+
+  function answerUI(q) {
+    const v = V.draft.v;
+    if (q.f === "p") {
+      let h = '<p class="scale-cap">' + esc(q.scale || "") + '</p><div class="paliers"><span class="rail" aria-hidden="true"></span>' +
+        q.o.map(function (o, i) {
+          return '<button class="opt" data-a="pick" data-v="' + i + '" aria-pressed="' + (v === i) + '"><span class="dot" aria-hidden="true"></span><span class="opt-l">' + esc(o) + '</span><kbd class="k num" aria-hidden="true">' + (i + 1) + '</kbd></button>';
+        }).join("") + '</div>';
+      if (q.cat) {
+        const ci = q.o.length;
+        h += '<div class="or" aria-hidden="true"><span></span>ou<span></span></div>' +
+          '<button class="opt cat" data-a="pick" data-v="' + ci + '" aria-pressed="' + (v === ci) + '"><span class="dot" aria-hidden="true"></span><span class="opt-l"><span>' + esc(q.cat.l) + '</span><small>' + esc(q.cat.s) + '</small></span><kbd class="k num" aria-hidden="true">' + (ci + 1) + '</kbd></button>';
+      }
+      return h;
+    }
+    if (q.f === "n" || q.f === "a") {
+      const sizes = [44, 34, 26, 34, 44];
+      const dots = '<div class="likert" role="radiogroup" aria-label="Ta position">' +
+        '<span class="likert-line" aria-hidden="true"></span>' +
+        [0, 1, 2, 3, 4].map(function (i) {
+          const label = q.f === "n" ? NU[i] : (i === 2 ? "Entre les deux" : (i < 2 ? (i === 0 ? "Nettement A" : "Plutôt A") : (i === 4 ? "Nettement B" : "Plutôt B")));
+          return '<button class="lk" role="radio" aria-checked="' + (v === i) + '" aria-label="' + esc(label) + '" data-a="pick" data-v="' + i + '"><span style="width:' + sizes[i] + 'px;height:' + sizes[i] + 'px"></span></button>';
+        }).join("") + '</div>' +
+        '<div class="likert-ends"><span>' + (q.f === "n" ? "Pas du tout d'accord" : "Option A") + '</span><span>' + (q.f === "n" ? "Tout à fait d'accord" : "Option B") + '</span></div>' +
+        '<p class="likert-choice" aria-live="polite">' + (v == null ? '<span class="muted">Choisis ta position</span>' : esc(q.f === "n" ? NU[v] : ansLabel(q, v))) + '</p>';
+      if (q.f === "a") {
+        const lean = v == null ? -1 : (v < 2 ? 0 : (v > 2 ? 1 : 2));
+        return '<div class="duel">' +
+          '<div class="duel-card' + (lean === 0 ? " on" : "") + '"><span class="duel-k">A</span>' + esc(q.a[0]) + '</div>' +
+          '<span class="duel-vs" aria-hidden="true">ou</span>' +
+          '<div class="duel-card' + (lean === 1 ? " on" : "") + '"><span class="duel-k">B</span>' + esc(q.a[1]) + '</div>' +
+          '</div>' + dots;
+      }
+      return dots;
+    }
+    if (q.f === "j") {
+      const n = q.o.length; const touched = v != null;
+      const val = touched ? v : Math.floor((n - 1) / 2);
+      const short = q.ol || q.o;
+      let viz = "";
+      if (q.gauge === "nuke") {
+        const p = touched ? q.pct[v] : null;
+        viz = '<div class="nuke"><span class="nuke-today" style="left:66%" aria-hidden="true"><em>aujourd\'hui</em></span>' +
+          '<div class="nuke-bar"><i style="width:' + (p == null ? 0 : p) + '%"><b>' + (p != null && p >= 25 ? "Nucléaire" : "") + '</b></i><b class="nuke-rest">' + (p == null || p <= 75 ? "Autres sources" : "") + '</b></div></div>';
+      }
+      return '<div class="gauge">' +
+        '<div class="readout"><span class="readout-v">' + (touched ? esc(short[v]) : "—") + '</span><span class="readout-s">' + (touched ? esc(q.o[v] === short[v] ? "" : q.o[v]) : "Fais glisser ou touche un cran") + '</span></div>' +
+        viz +
+        '<label class="sr" for="jauge-' + q.id + '">' + esc(q.q) + '</label>' +
+        '<input id="jauge-' + q.id + '" class="jauge' + (touched ? " on" : "") + '" type="range" min="0" max="' + (n - 1) + '" step="1" value="' + val + '" data-in="jauge" aria-valuetext="' + esc(touched ? q.o[v] : "Pas encore choisi") + '">' +
+        '<div class="crans" style="grid-template-columns:repeat(' + n + ',minmax(0,1fr))">' + short.map(function (s, i) {
+          return '<button class="cran" data-a="pick" data-v="' + i + '" aria-pressed="' + (v === i) + '">' + esc(s) + '</button>';
+        }).join("") + '</div>' +
+        '<p class="hint">La jauge avance par crans : les candidats s\'expriment rarement au chiffre près.</p></div>';
+    }
+    return "";
+  }
+
+  SCREENS.question = function () {
+    const q = curQ(); const t = TMAP[q.t];
+    const inTheme = S.order.filter(function (id) { return QMAP[id].t === q.t; });
+    const k = inTheme.indexOf(q.id) + 1;
+    const last = S.idx === S.order.length - 1;
+    const nextLabel = V.edit ? "Enregistrer" : (last ? "Voir mes résultats" : "Question suivante");
+    const head = q.f === "n"
+      ? '<div class="stmt"><p class="stmt-k">Proposition</p><h1 class="q" tabindex="-1">' + esc(q.q) + '</h1></div>'
+      : '<h1 class="q" tabindex="-1">' + esc(q.q) + '</h1>';
+    return '<main class="screen question fmt-' + q.f + '">' +
+      topbar(V.edit ? "toReview" : "prevQ", '<span class="count num">' + (S.idx + 1) + '/' + S.order.length + '</span>') +
+      (V.edit ? "" : progressBar()) +
+      '<div class="q-meta"><span class="eyebrow">' + esc(t.n) + '</span><span class="num">' + (V.edit ? "Modifier ma réponse" : "Question " + k + " sur " + inTheme.length) + '</span></div>' +
+      '<div class="q-body">' + head + nowLine(q) + '<div class="answer">' + answerUI(q) + '</div></div>' +
+      '<div class="imp-row"><span class="imp-l" id="imp-l">Poids dans mon choix</span><div class="seg" role="group" aria-labelledby="imp-l">' +
+      IMP.map(function (m, i) { return '<button data-a="imp" data-v="' + i + '" aria-pressed="' + (V.draft.imp === i) + '">' + m.l + '</button>'; }).join("") +
+      '</div></div>' +
+      '<div class="footer-bar"><button class="btn link" data-a="skipQ">Sans avis</button><button class="btn primary grow" data-a="next"' + (V.draft.v === undefined || V.draft.v === null ? " disabled" : "") + '>' + nextLabel + ICON.arrow + '</button></div>' +
+      '</main>';
+  };
+
+  SCREENS.review = function () {
+    const groups = THEMES.filter(function (t) { return S.order.some(function (id) { return QMAP[id].t === t.id; }); });
+    return '<main class="screen">' + topbar("results") +
+      '<div class="stack-l"><p class="eyebrow">Tes réponses</p><h1 class="title" tabindex="-1">Modifier mes réponses</h1>' +
+      '<p class="lead">Touche une question pour changer ta réponse. Les scores se recalculent aussitôt.</p>' +
+      groups.map(function (t) {
+        return '<section class="rev-group"><h2 class="h2">' + esc(t.n) + '</h2>' +
+          S.order.filter(function (id) { return QMAP[id].t === t.id; }).map(function (id) {
+            const q = QMAP[id]; const a = S.ans[id];
+            return '<button class="rev-item" data-a="editQ" data-v="' + id + '"><span class="rev-q">' + esc(q.q) + '</span><span class="rev-a">' + esc(a ? ansLabel(q, a.v) : "Pas répondu") + (a && a.v != null && a.imp !== 1 ? ' · ' + IMP[a.imp].l : "") + '</span>' + ICON.chev + '</button>';
+          }).join("") + '</section>';
+      }).join("") + '</div>' +
+      '<div class="footer-bar"><button class="btn primary grow" data-a="results">Voir mes résultats' + ICON.arrow + '</button></div></main>';
+  };
+
+  SCREENS.results = function () {
+    const R = scores();
+    if (!R.ranked.length) {
+      return '<main class="screen">' + topbar("home") + '<div class="stack-l"><h1 class="title" tabindex="-1">Pas encore de résultat</h1><p class="lead">Tu n\'as répondu « sans avis » qu\'à des questions où les positions sont connues. Réponds à quelques questions pour voir tes affinités.</p></div><div class="footer-bar"><button class="btn primary grow" data-a="review">Reprendre mes réponses</button></div></main>';
+    }
+    const top = R.ranked[0]; const second = R.ranked[1];
+    const reveal = V.revealNow;
+    let h = '<main class="screen results">' + topbar("home", '<button class="btn link small" data-a="review">Modifier</button>') +
+      '<section class="top-card' + (reveal ? " reveal" : "") + '" aria-labelledby="top-name">' +
+      '<div class="folds" aria-hidden="true"></div>' +
+      '<div class="top-in">' +
+      '<p class="top-k">Le plus proche de tes réponses</p>' +
+      '<h1 class="top-name" id="top-name" tabindex="-1">' + esc(top.c.n) + '</h1>' +
+      '<p class="top-p">' + esc(top.c.p) + '</p>' +
+      '<div class="top-score"><span class="big num">' + top.pct + '<em>%</em></span><span class="top-d">d\'accord, sur les <b class="num">' + top.n + '</b> questions où sa position est connue</span></div>' +
+      '<div class="top-foot num"><span>' + (second ? "Écart avec le 2ᵉ : " + (top.pct - second.pct) + (top.pct - second.pct > 1 ? " points" : " point") : "") + '</span><span>' + R.answered + ' réponses</span></div>' +
+      '</div>' +
+      (reveal ? '<span class="rv l" aria-hidden="true"></span><span class="rv r" aria-hidden="true"></span>' : "") +
+      '</section>' +
+      '<p class="disclaimer">Une proximité avec tes réponses, pas une consigne de vote. Le calcul s\'est fait sur ton appareil : rien n\'a été envoyé.</p>';
+
+    h += '<div class="sec-head"><h2 class="h2">Tous les candidats</h2><div class="seg" role="group" aria-label="Affichage">' +
+      '<button data-a="view" data-v="global" aria-pressed="' + (V.view === "global") + '">Global</button>' +
+      '<button data-a="view" data-v="themes" aria-pressed="' + (V.view === "themes") + '">Par thème</button></div></div>';
+
+    if (V.view === "global") {
+      h += '<div class="rank">' + R.ranked.map(function (r, i) {
+        return '<button class="rank-row" data-a="sheet" data-v="' + r.c.id + '">' +
+          '<span class="rank-i num">' + (i + 1) + '</span>' +
+          '<span class="rank-n"><b>' + esc(r.c.n) + '</b><small>' + esc(r.c.p) + ' · <span class="num">' + r.n + '</span> q.</small></span>' +
+          '<span class="rank-p num">' + r.pct + ' %</span>' +
+          '<span class="rank-bar"><i style="width:' + r.pct + '%"' + (i === 0 ? ' class="lead"' : "") + '></i></span>' +
+          '<span class="rank-f">' + (r.partial ? "Partiel" : "") + '</span>' +
+          '</button>';
+      }).join("") + '</div>' +
+        '<p class="note"><b class="flag">Partiel</b> peu de positions connues sur tes questions : score moins fiable. Touche un candidat pour voir le détail.</p>';
+    } else {
+      const ths = THEMES.filter(function (t) { return R.ranked.some(function (r) { return r.th[t.id]; }); });
+      h += '<div class="heat-wrap"><table class="heat"><thead><tr><th scope="col"><span class="sr">Candidat</span></th>' +
+        ths.map(function (t) { return '<th scope="col"><span>' + esc(t.n) + '</span></th>'; }).join("") + '</tr></thead><tbody>' +
+        R.ranked.map(function (r) {
+          return '<tr><th scope="row"><button data-a="sheet" data-v="' + r.c.id + '">' + esc(lastName(r.c)) + '</button></th>' +
+            ths.map(function (t) {
+              const x = r.th[t.id];
+              if (!x) return '<td class="na" title="Pas de position connue">–</td>';
+              const p = Math.round(x.sum / x.w * 100);
+              return '<td class="num' + (p >= 60 ? " hi" : "") + '" style="--p:' + Math.round(p * 0.9) + '%" title="' + esc(r.c.n + " · " + t.n + " : " + p + " % sur " + x.n + " question" + (x.n > 1 ? "s" : "")) + '">' + p + '</td>';
+            }).join("") + '</tr>';
+        }).join("") + '</tbody></table></div>' +
+        '<p class="note">Pourcentage d\'accord par thème. Un tiret : aucune position connue sur tes questions de ce thème.</p>';
+    }
+
+    const items = [];
+    Object.keys(S.ans).forEach(function (qid) {
+      const q = QMAP[qid]; const a = S.ans[qid]; const p = q && q.P[top.c.id];
+      if (!q || a.v == null || !p) return;
+      items.push({ q: q, a: a, p: p, g: agree(q, a.v, p[0]) });
+    });
+    const best = items.slice().sort(function (x, y) { return y.g - x.g || (y.a.imp - x.a.imp); })[0];
+    const worst = items.slice().sort(function (x, y) { return x.g - y.g || (y.a.imp - x.a.imp); })[0];
+    if (best && worst && best !== worst) {
+      h += '<h2 class="h2 sec">Avec ' + esc(top.c.n) + '</h2><div class="pair">' +
+        pairCard("Votre plus grand accord", best, top.c) + (worst.g < 1 ? pairCard("Votre plus grand écart", worst, top.c) : "") + '</div>';
+    }
+
+    if (R.unranked.length) {
+      h += '<p class="note">Pas assez de positions connues sur tes questions pour classer : ' + R.unranked.map(function (r) { return esc(r.c.n); }).join(", ") + '.</p>';
+    }
+
+    h += '<div class="actions">' +
+      '<button class="btn primary block" data-a="share">Partager mon résultat</button>' +
+      '<button class="btn ghost block" data-a="programmes">Comparer les programmes</button>' +
+      '<div class="actions-row"><button class="btn link" data-a="review">Modifier mes réponses</button><button class="btn link" data-a="restart">Refaire le test</button></div>' +
+      '</div>' +
+      '<p class="home-foot"><button class="inline-link" data-a="methode">Comment le score est calculé</button></p>' +
+      '</main>';
+    return h;
+  };
+
+  function pairCard(label, it, c) {
+    return '<article class="pair-card"><p class="pair-k">' + label + '</p><p class="pair-t">' + esc(TMAP[it.q.t].n) + '</p><h3 class="pair-q">' + esc(it.q.q) + '</h3>' +
+      '<dl class="cmp-grid"><dt>Toi</dt><dd>' + esc(ansLabel(it.q, it.a.v)) + '</dd><dt>' + esc(firstName(c)) + '</dt><dd>' + esc(posLabel(it.q, it.p[0])) + (it.p[2] ? '<small>' + esc(it.p[2]) + '</small>' : "") + '</dd></dl>' +
+      '<p class="pair-src">' + srcLink(it.p[1]) + badges(it.p) + '</p></article>';
+  }
+
+  function sheetHTML() {
+    const c = CMAP[V.sheet]; if (!c) return "";
+    const R = scores();
+    const r = R.ranked.concat(R.unranked).filter(function (x) { return x.c.id === c.id; })[0];
+    const items = [];
+    S.order.forEach(function (qid) {
+      const q = QMAP[qid]; const a = S.ans[qid]; const p = q.P[c.id];
+      if (!a || a.v == null || !p) return;
+      items.push({ q: q, a: a, p: p, g: agree(q, a.v, p[0]) });
+    });
+    const f = V.sheetFilter;
+    const shown = items.filter(function (it) { return f === "all" || (f === "ok" ? it.g >= 0.75 : it.g < 0.5); });
+    return '<div class="sheet-back" data-a="closeSheet"><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="sheet-h" data-stop="1">' +
+      '<div class="sheet-head"><span class="grab" aria-hidden="true"></span><div class="sheet-top"><div><h2 class="sheet-h" id="sheet-h" tabindex="-1">' + esc(c.n) + '</h2><p class="muted">' + esc(c.p) + '</p></div>' +
+      '<button class="iconbtn" data-a="closeSheet" aria-label="Fermer">' + ICON.close + '</button></div>' +
+      (r && r.n ? '<p class="sheet-score"><span class="num">' + r.pct + ' %</span> d\'accord sur <span class="num">' + r.n + '</span> question' + (r.n > 1 ? "s" : "") + '</p>' : "") +
+      (c.note ? '<p class="cand-note">' + esc(c.note) + '</p>' : "") +
+      '<div class="seg wide" role="group" aria-label="Filtrer">' +
+      [["all", "Tout"], ["ok", "Accords"], ["ko", "Écarts"]].map(function (x) { return '<button data-a="sheetFilter" data-v="' + x[0] + '" aria-pressed="' + (f === x[0]) + '">' + x[1] + '</button>'; }).join("") +
+      '</div></div>' +
+      '<div class="sheet-list">' + (shown.length ? shown.map(function (it) {
+        const cls = it.g >= 0.75 ? "ok" : (it.g >= 0.5 ? "mid" : "ko");
+        const lab = it.g >= 0.75 ? "Accord" : (it.g >= 0.5 ? "Proche" : "Écart");
+        return '<article class="cmp"><div class="cmp-top"><span class="eyebrow">' + esc(TMAP[it.q.t].n) + '</span><span class="agree ' + cls + '">' + lab + '</span></div>' +
+          '<h3 class="cmp-q">' + esc(it.q.q) + '</h3>' +
+          '<dl class="cmp-grid"><dt>Toi</dt><dd>' + esc(ansLabel(it.q, it.a.v)) + '</dd><dt>' + esc(firstName(c)) + '</dt><dd>' + esc(posLabel(it.q, it.p[0])) + (it.p[2] ? '<small>' + esc(it.p[2]) + '</small>' : "") + '</dd></dl>' +
+          '<p class="pair-src">' + srcLink(it.p[1]) + badges(it.p) + '</p></article>';
+      }).join("") : '<p class="muted pad">Aucune question dans cette catégorie.</p>') + '</div>' +
+      '<div class="sheet-foot"><button class="btn ghost block" data-a="candProg" data-v="' + c.id + '">Voir toutes ses positions</button></div>' +
+      '</div></div>';
+  }
+
+  function posBlock(q, cid) {
+    const p = q.P[cid];
+    if (!p) return '<span class="pos-none">Pas de position connue à ce jour</span>';
+    return '<span class="pos-v">' + esc(posLabel(q, p[0])) + '</span>' + (p[2] ? '<span class="pos-note">' + esc(p[2]) + '</span>' : "") +
+      '<span class="pos-src">' + srcLink(p[1]) + badges(p) + '</span>';
+  }
+
+  SCREENS.programmes = function () {
+    let h = '<main class="screen wide progs">' + topbar("home") +
+      '<div class="prog-head"><p class="eyebrow">Les programmes</p><h1 class="title" tabindex="-1">Qui propose quoi</h1>' +
+      '<p class="lead">' + QS.length + ' questions, ' + CANDS.length + ' candidats. Mis à jour le ' + MAJ + '. L\'ordre des candidats est tiré au sort à chaque visite.</p></div>';
+    if (!S.done) {
+      h += '<div class="blind"><p>Pour un résultat à l\'aveugle, fais le test avant de lire les programmes.</p><button class="btn primary small" data-a="' + (S.order.length ? "resume" : "start") + '">' + (S.order.length ? "Reprendre le test" : "Faire le test") + '</button></div>';
+    }
+    h += '<div class="seg big" role="tablist" aria-label="Vue">' +
+      [["theme", "Par thème"], ["cand", "Par candidat"], ["face", "Face à face"]].map(function (x) {
+        return '<button role="tab" data-a="progTab" data-v="' + x[0] + '" aria-selected="' + (V.progTab === x[0]) + '" aria-pressed="' + (V.progTab === x[0]) + '">' + x[1] + '</button>';
+      }).join("") + '</div>';
+
+    if (V.progTab === "theme") {
+      h += '<div class="chips scroll" role="group" aria-label="Thème">' + THEMES.map(function (t) {
+        return '<button class="chip" data-a="progTheme" data-v="' + t.id + '" aria-pressed="' + (V.progTheme === t.id) + '">' + esc(t.n) + '</button>';
+      }).join("") + '</div>';
+      h += '<div class="qlist">' + QS.filter(function (q) { return q.t === V.progTheme; }).map(function (q) {
+        return '<article class="qcard"><h2 class="qcard-q">' + (q.f === "n" ? '<span class="qcard-k">Proposition</span>' : "") + esc(q.q) + '</h2>' +
+          (q.f === "a" ? '<p class="qcard-a"><b>A</b> ' + esc(q.a[0]) + '<br><b>B</b> ' + esc(q.a[1]) + '</p>' : "") +
+          nowLine(q) +
+          '<div class="pos-list">' + V.candOrder.map(function (cid) {
+            const c = CMAP[cid];
+            return '<div class="pos-row' + (q.P[cid] ? "" : " none") + '"><span class="pos-c">' + esc(c.n) + '</span><span class="pos-b">' + posBlock(q, cid) + '</span></div>';
+          }).join("") + '</div></article>';
+      }).join("") + '</div>';
+    } else if (V.progTab === "cand") {
+      const c = CMAP[V.progCand];
+      const known = QS.filter(function (q) { return q.P[c.id]; });
+      h += '<div class="chips scroll" role="group" aria-label="Candidat">' + V.candOrder.map(function (cid) {
+        return '<button class="chip" data-a="progCand" data-v="' + cid + '" aria-pressed="' + (V.progCand === cid) + '">' + esc(CMAP[cid].n) + '</button>';
+      }).join("") + '</div>' +
+        '<div class="cand-card"><h2 class="cand-h">' + esc(c.n) + '</h2><p class="muted">' + esc(c.p) + ' · <span class="num">' + known.length + '</span> positions connues sur ' + QS.length + '</p>' + (c.note ? '<p class="cand-note">' + esc(c.note) + '</p>' : "") + '</div>';
+      THEMES.forEach(function (t) {
+        const qs = known.filter(function (q) { return q.t === t.id; });
+        if (!qs.length) return;
+        h += '<section class="cand-sec"><h3 class="h2">' + esc(t.n) + '</h3><div class="qlist">' + qs.map(function (q) {
+          return '<article class="qcard slim"><h4 class="qcard-q">' + esc(q.q) + '</h4><div class="pos-solo">' + posBlock(q, c.id) + '</div></article>';
+        }).join("") + '</div></section>';
+      });
+    } else {
+      const A = CMAP[V.faceA], B = CMAP[V.faceB];
+      const opts = function (sel) { return V.candOrder.map(function (cid) { return '<option value="' + cid + '"' + (cid === sel ? " selected" : "") + '>' + esc(CMAP[cid].n) + '</option>'; }).join(""); };
+      h += '<div class="face-pick"><label class="sel"><span>Candidat A</span><select id="face-a" data-in="faceA">' + opts(V.faceA) + '</select></label>' +
+        '<label class="sel"><span>Candidat B</span><select id="face-b" data-in="faceB">' + opts(V.faceB) + '</select></label></div>';
+      const qs = QS.filter(function (q) { return q.P[A.id] || q.P[B.id]; });
+      let same = 0, both = 0;
+      qs.forEach(function (q) { if (q.P[A.id] && q.P[B.id]) { both++; if (agree(q, q.P[A.id][0], q.P[B.id][0]) >= 0.75) same++; } });
+      h += '<p class="lead num">' + both + ' questions où l\'on connaît la position des deux · ' + same + ' positions proches</p>';
+      THEMES.forEach(function (t) {
+        const tq = qs.filter(function (q) { return q.t === t.id; });
+        if (!tq.length) return;
+        h += '<section class="cand-sec"><h3 class="h2">' + esc(t.n) + '</h3><div class="qlist">' + tq.map(function (q) {
+          let tag = "";
+          if (q.P[A.id] && q.P[B.id]) { const g = agree(q, q.P[A.id][0], q.P[B.id][0]); tag = g >= 0.75 ? '<span class="agree ok">Proches</span>' : (g >= 0.5 ? '<span class="agree mid">Nuancés</span>' : '<span class="agree ko">Opposés</span>'); }
+          return '<article class="qcard slim"><div class="cmp-top"><h4 class="qcard-q">' + esc(q.q) + '</h4>' + tag + '</div><div class="face"><div><span class="face-c">' + esc(A.n) + '</span>' + posBlock(q, A.id) + '</div><div><span class="face-c">' + esc(B.n) + '</span>' + posBlock(q, B.id) + '</div></div></article>';
+        }).join("") + '</div></section>';
+      });
+    }
+    h += '<p class="home-foot"><button class="inline-link" data-a="methode">Méthode et sources</button></p></main>';
+    return h;
+  };
+
+  SCREENS.methode = function () {
+    const used = {};
+    QS.forEach(function (q) { Object.keys(q.P).forEach(function (k) { used[q.P[k][1]] = 1; }); if (q.nowSrc) used[q.nowSrc] = 1; });
+    return '<main class="screen prose-screen">' + topbar("home") +
+      '<article class="prose"><p class="eyebrow">Méthode</p><h1 class="title" tabindex="-1">Comment Isoloir fonctionne</h1>' +
+      '<h2>Le calcul</h2>' +
+      '<p>Chaque réponse est placée sur une échelle : cinq nuances pour les propositions et les arbitrages, des paliers ou des crans pour les autres questions. Pour chaque candidat dont la position est connue, l\'accord vaut 100 % si vous êtes au même endroit, et baisse avec l\'écart. Une réponse hors échelle, comme « plus d\'âge légal », compte pour 25 % face à une réponse sur l\'échelle.</p>' +
+      '<p>Chaque question pèse 0,5, 1 ou 2 selon le poids que tu lui donnes, multiplié par 1,5 si son thème fait partie de tes priorités. Les questions « sans avis » et celles où la position du candidat est inconnue ne comptent pas.</p>' +
+      '<p>Pour éviter qu\'un candidat avec deux positions connues affiche 100 %, le score est tiré légèrement vers 50 % quand il repose sur peu de questions. Un candidat n\'est classé qu\'à partir de trois questions en commun, et marqué « Partiel » en dessous de six questions ou de 30 % de tes réponses.</p>' +
+      '<h2>Les positions</h2>' +
+      '<p>Chaque position renvoie à sa source : programme officiel, déclaration ou article de presse. Deux étiquettes signalent les cas plus fragiles :</p>' +
+      '<ul><li><b>Estimée</b> : le candidat n\'a pas répondu à cette question précise ; sa position est déduite de mesures proches, citées en note.</li><li><b>Programme antérieur</b> : la position vient d\'un programme d\'une élection précédente (2022 ou 2024), faute de programme 2027 publié.</li></ul>' +
+      '<p>Beaucoup de candidats n\'ont pas encore publié de programme complet. Les positions seront mises à jour au fil de la campagne.</p>' +
+      '<h2>La neutralité</h2>' +
+      '<ul><li>Aucune couleur de parti, nulle part.</li><li>Les propositions sont présentées sans nom de candidat pendant le test.</li><li>Dans « Les programmes », l\'ordre des candidats est tiré au sort à chaque visite.</li><li>Les questions portent sur des mesures concrètes, formulées de la façon la plus neutre possible. Signale-nous toute formulation qui te semble orientée.</li></ul>' +
+      '<h2>Tes données</h2>' +
+      '<p>Tout se passe sur ton appareil. Tes réponses sont gardées dans ton navigateur pour te permettre de reprendre plus tard, et ne sont envoyées nulle part. Le bouton « Refaire le test » les efface.</p>' +
+      '<h2>Les limites</h2>' +
+      '<p>Une soixantaine de questions ne résument pas un programme, et le résultat dépend des questions choisies. Isoloir est un point de départ pour lire les programmes, pas un substitut.</p>' +
+      '<h2>Sources</h2><ul class="srcs">' + Object.keys(SRC).filter(function (k) { return used[k]; }).map(function (k) {
+        return '<li><a href="' + esc(SRC[k].u) + '" target="_blank" rel="noopener">' + esc(SRC[k].l) + '</a></li>';
+      }).join("") + '</ul>' +
+      '<p class="muted">Données au ' + MAJ + '. Isoloir n\'est affilié à aucun parti ni candidat.</p>' +
+      '</article></main>';
+  };
+
+  /* ---------- Rendu ---------- */
+  const app = document.getElementById("app");
+  let lastScreen = null;
+  function render() {
+    const scr = SCREENS[V.screen] ? V.screen : "home";
+    const changed = scr !== lastScreen || scr === "question" || scr === "chapter";
+    app.innerHTML = SCREENS[scr]() + (V.sheet ? sheetHTML() : "");
+    app.firstElementChild.classList.toggle("enter", changed);
+    if (changed) {
+      try { window.scrollTo(0, 0); } catch (e) { }
+      const h = app.querySelector("h1[tabindex]");
+      if (h) h.focus({ preventScroll: true });
+    }
+    lastScreen = scr;
+    if (V.revealNow && scr === "results") {
+      const card = app.querySelector(".top-card.reveal");
+      const done = function () { V.revealNow = false; S.revealed = true; save(); };
+      if (!card || matchMedia("(prefers-reduced-motion: reduce)").matches) done();
+      else setTimeout(done, 2100);
+    }
+  }
+  function renderKeep() {
+    const y = window.scrollY;
+    const sheetList = app.querySelector(".sheet");
+    const sy = sheetList ? sheetList.scrollTop : 0;
+    app.innerHTML = SCREENS[V.screen]() + (V.sheet ? sheetHTML() : "");
+    window.scrollTo(0, y);
+    const s2 = app.querySelector(".sheet"); if (s2) s2.scrollTop = sy;
+  }
+
+  /* ---------- Partage ---------- */
+  function toast(msg) {
+    let t = document.querySelector(".toast");
+    if (!t) { t = document.createElement("div"); t.className = "toast"; t.setAttribute("role", "status"); document.body.appendChild(t); }
+    t.textContent = msg; t.classList.add("on");
+    clearTimeout(toast._t); toast._t = setTimeout(function () { t.classList.remove("on"); }, 2200);
+  }
+  function shareText() {
+    const R = scores();
+    const lines = R.ranked.slice(0, 3).map(function (r, i) { return (i + 1) + ". " + r.c.n + " : " + r.pct + " %"; });
+    return "Mes affinités pour la présidentielle 2027, d'après Isoloir :\n" + lines.join("\n") +
+      "\n\nFais le test (rien n'est enregistré)" + (SHARE_URL ? " : " + SHARE_URL : ".");
+  }
+  function copy(text) {
+    const fallback = function () {
+      const box = document.createElement("div");
+      box.className = "sheet-back"; box.setAttribute("data-a", "closeCopy");
+      box.innerHTML = '<div class="sheet copybox" role="dialog" aria-modal="true" aria-label="Texte à copier" data-stop="1"><p class="pair-k">Copie ce texte</p><textarea id="copy-text" readonly rows="7">' + esc(text) + '</textarea><button class="btn primary block" data-a="closeCopy">Fermer</button></div>';
+      document.body.appendChild(box);
+      const ta = box.querySelector("textarea"); ta.focus(); ta.select();
+    };
+    try {
+      navigator.clipboard.writeText(text).then(function () { toast("Copié, prêt à coller"); }, fallback);
+    } catch (e) { fallback(); }
+  }
+
+  /* ---------- Actions ---------- */
+  const ACT = {
+    home: function () { V.sheet = null; V.edit = false; V.screen = "home"; render(); },
+    start: function () { V.screen = "pacte"; render(); },
+    toMode: function () { V.screen = "mode"; render(); },
+    pacte: function () { V.screen = "pacte"; render(); },
+    pickMode: function (v) {
+      S = fresh(); S.mode = v; save();
+      if (v === "carte") { S.themes = []; V.screen = "themes"; } else { V.screen = "prio"; }
+      render();
+    },
+    toggleTheme: function (v) { const i = S.themes.indexOf(v); if (i >= 0) S.themes.splice(i, 1); else S.themes.push(v); S.prio = S.prio.filter(function (p) { return S.themes.indexOf(p) >= 0; }); save(); renderKeep(); },
+    toThemes: function () { V.screen = "themes"; render(); },
+    toPrio: function () { if (!S.themes.length) return; S.themes = THEMES.map(function (t) { return t.id; }).filter(function (id) { return S.themes.indexOf(id) >= 0; }); V.screen = "prio"; render(); },
+    toPrioBack: function () { V.screen = "prio"; render(); },
+    togglePrio: function (v) { const i = S.prio.indexOf(v); if (i >= 0) S.prio.splice(i, 1); else if (S.prio.length < 3) S.prio.push(v); save(); renderKeep(); },
+    beginQuiz: function (v) { if (v === "skip") S.prio = []; buildOrder(); save(); V.chapterSeen = -1; goQuestion(0); },
+    resume: function () {
+      if (!S.order.length) { ACT.start(); return; }
+      let i = S.order.findIndex(function (id) { return !S.ans[id]; });
+      if (i < 0) i = S.order.length - 1;
+      V.chapterSeen = i; goQuestion(i);
+    },
+    enterChapter: function () { V.chapterSeen = S.idx; V.screen = "question"; initDraft(); render(); },
+    prevQ: function () {
+      if (V.screen === "question" && needsChapter(S.idx) && V.chapterSeen === S.idx) { V.chapterSeen = -1; V.screen = "chapter"; render(); return; }
+      if (S.idx === 0) { V.screen = "prio"; render(); return; }
+      V.chapterSeen = S.idx - 1; goQuestion(S.idx - 1);
+    },
+    pick: function (v) {
+      const q = curQ(); V.draft.v = Number(v);
+      renderKeep();
+      if (q.f === "j") { const el = document.getElementById("jauge-" + q.id); if (el) el.focus({ preventScroll: true }); }
+    },
+    imp: function (v) { V.draft.imp = Number(v); renderKeep(); },
+    next: function () { if (V.draft.v == null) return; commit(V.draft.v); },
+    skipQ: function () { commit(null); },
+    results: function () { V.sheet = null; V.screen = "results"; render(); },
+    view: function (v) { V.view = v; renderKeep(); },
+    sheet: function (v) { V.sheet = v; V.sheetFilter = "all"; renderKeep(); const h = document.getElementById("sheet-h"); if (h) h.focus(); },
+    closeSheet: function () { V.sheet = null; renderKeep(); },
+    sheetFilter: function (v) { V.sheetFilter = v; renderKeep(); },
+    candProg: function (v) { V.sheet = null; V.progTab = "cand"; V.progCand = v; V.screen = "programmes"; render(); },
+    review: function () { V.sheet = null; V.screen = "review"; render(); },
+    toReview: function () { V.edit = false; V.screen = "review"; render(); },
+    editQ: function (v) { const i = S.order.indexOf(v); if (i < 0) return; V.edit = true; S.idx = i; V.screen = "question"; initDraft(); render(); },
+    restart: function () {
+      S = fresh(); save(); V.sheet = null; V.screen = "pacte"; render();
+    },
+    programmes: function () { V.sheet = null; V.screen = "programmes"; render(); },
+    progTab: function (v) { V.progTab = v; renderKeep(); },
+    progTheme: function (v) { V.progTheme = v; renderKeep(); },
+    progCand: function (v) { V.progCand = v; renderKeep(); },
+    methode: function () { V.sheet = null; V.screen = "methode"; render(); },
+    share: function () { copy(shareText()); },
+    closeCopy: function () { const b = document.querySelector("body > .sheet-back"); if (b) b.remove(); }
+  };
+
+  document.addEventListener("click", function (e) {
+    const el = e.target.closest("[data-a]");
+    if (!el) return;
+    if (el.classList.contains("sheet-back") && e.target.closest("[data-stop]")) return;
+    const fn = ACT[el.getAttribute("data-a")];
+    if (fn && !el.disabled) { e.preventDefault(); fn(el.getAttribute("data-v")); }
+  });
+  document.addEventListener("input", function (e) {
+    const t = e.target.getAttribute && e.target.getAttribute("data-in");
+    if (t === "jauge") { V.draft.v = Number(e.target.value); patchJauge(e.target); }
+  });
+  function patchJauge(input) {
+    const q = curQ(); const v = V.draft.v; const short = q.ol || q.o;
+    const rv = app.querySelector(".readout-v"); if (rv) rv.textContent = short[v];
+    const rs = app.querySelector(".readout-s"); if (rs) rs.textContent = q.o[v] === short[v] ? "" : q.o[v];
+    app.querySelectorAll(".cran").forEach(function (b, i) { b.setAttribute("aria-pressed", String(i === v)); });
+    input.classList.add("on"); input.setAttribute("aria-valuetext", q.o[v]);
+    if (q.gauge === "nuke") {
+      const p = q.pct[v]; const bar = app.querySelector(".nuke-bar i");
+      if (bar) { bar.style.width = p + "%"; bar.firstChild.textContent = p >= 25 ? "Nucléaire" : ""; }
+      const rest = app.querySelector(".nuke-rest"); if (rest) rest.textContent = p <= 75 ? "Autres sources" : "";
+    }
+    const nb = app.querySelector('[data-a="next"]'); if (nb) nb.disabled = false;
+  }
+  document.addEventListener("change", function (e) {
+    const t = e.target.getAttribute && e.target.getAttribute("data-in");
+    if (t === "faceA") { V.faceA = e.target.value; renderKeep(); }
+    if (t === "faceB") { V.faceB = e.target.value; renderKeep(); }
+  });
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape") { if (document.querySelector("body > .sheet-back")) { ACT.closeCopy(); return; } if (V.sheet) { ACT.closeSheet(); return; } }
+    if (V.screen !== "question" || V.sheet || e.metaKey || e.ctrlKey || e.altKey) return;
+    const tag = (e.target.tagName || "").toLowerCase();
+    if (tag === "select" || tag === "textarea") return;
+    const q = curQ();
+    if (/^[1-9]$/.test(e.key)) {
+      const v = Number(e.key) - 1;
+      const max = q.f === "n" || q.f === "a" ? 5 : q.o.length + (q.cat ? 1 : 0);
+      if (v < max) { e.preventDefault(); ACT.pick(v); }
+    } else if (e.key === "Enter" && tag !== "button") {
+      if (V.draft.v != null) { e.preventDefault(); ACT.next(); }
+    }
+  });
+
+  /* ---------- Démarrage ---------- */
+  const hash = (location.hash || "").replace("#", "");
+  if (hash === "programmes" || hash === "methode") V.screen = hash;
+  render();
+})();
+
+</script>
+
+</body>
+</html>
